@@ -8,6 +8,7 @@ import { RxDashboard } from "react-icons/rx";
 import { IoIosArrowDown } from "react-icons/io";
 import { BsCalendar3Event } from "react-icons/bs";
 import { FaWpforms } from "react-icons/fa6";
+import { SlDocs } from "react-icons/sl";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -121,10 +122,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       >
                         <RxDashboard />
                         Dashboard
-                        <IoIosArrowDown className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                        <IoIosArrowDown
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
                             open && 'rotate-180'
-                          }`}/>
-                        
+                          }`}
+                        />
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       <div
@@ -178,10 +180,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       >
                         <BsCalendar3Event />
                         Events
-                        <IoIosArrowDown className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                        <IoIosArrowDown
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
                             open && 'rotate-180'
-                          }`}/>
-                        
+                          }`}
+                        />
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       <div
@@ -210,6 +213,65 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               }
                             >
                               Add Event
+                            </NavLink>
+                          </li>
+                        </ul>
+                      </div>
+                      {/* <!-- Dropdown Menu End --> */}
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
+              {/* <!-- Menu Item Events End --> */}
+
+              {/* <!-- Menu Item Events Start --> */}
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname === '/submissions' ||
+                  pathname.includes('submissions')
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <NavLink
+                        to="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          (pathname === '/submissions' ||
+                            pathname.includes('submissions')) &&
+                          'bg-graydark dark:bg-meta-4'
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <SlDocs />
+                        Submissions
+                        <IoIosArrowDown
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                            open && 'rotate-180'
+                          }`}
+                        />
+                      </NavLink>
+                      {/* <!-- Dropdown Menu Start --> */}
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
+                      >
+                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <NavLink
+                              to="/submissions/submission-list"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Submission List
                             </NavLink>
                           </li>
                         </ul>
@@ -303,9 +365,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       >
                         <FaWpforms />
                         Forms
-                        <IoIosArrowDown className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                        <IoIosArrowDown
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
                             open && 'rotate-180'
-                          }`}/>
+                          }`}
+                        />
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       <div

@@ -18,6 +18,7 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import AddEvent from './pages/Events/AddEvent';
 import EventList from './pages/Events/EventList';
+import SubmissionList from './pages/Submissions/SubmissionList';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,6 +61,15 @@ function App() {
             <>
               <PageTitle title="Add new event | SMU" />
               <EventList />
+            </>
+          }
+        />
+        <Route
+          path="/submissions/submission-list"
+          element={
+            <>
+              <PageTitle title="submission list| SMU" />
+              <SubmissionList />
             </>
           }
         />
