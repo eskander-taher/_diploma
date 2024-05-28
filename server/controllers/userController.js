@@ -89,6 +89,7 @@ exports.loginUser = async (req, res) => {
   try {
     // Validating user input
     const { email, password } = req.body;
+    
 
     const userLoginSchema = z.object({
       email: z.string().email(),
@@ -121,9 +122,17 @@ exports.loginUser = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: existingUser._id }, process.env.SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      {
+        userId: existingUser._id,
+        role: existingUser.role,
+        username: existingUser.username,
+      },
+      process.env.SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.json({
       success: true,

@@ -19,6 +19,7 @@ import Buttons from './pages/UiElements/Buttons';
 import AddEvent from './pages/Events/AddEvent';
 import EventList from './pages/Events/EventList';
 import SubmissionList from './pages/Submissions/SubmissionList';
+import ModeratorsList from './pages/Moderators/ModeratorsList';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -70,6 +71,15 @@ function App() {
             <>
               <PageTitle title="submission list| SMU" />
               <SubmissionList />
+            </>
+          }
+        />
+        <Route
+          path="/moderators/moderator-list"
+          element={
+            <>
+              <PageTitle title="moderators list| SMU" />
+              <ModeratorsList />
             </>
           }
         />

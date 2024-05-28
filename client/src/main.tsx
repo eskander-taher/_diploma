@@ -6,11 +6,24 @@ import './css/style.css';
 import './css/satoshi.css';
 import 'jsvectormap/dist/css/jsvectormap.css';
 import 'flatpickr/dist/flatpickr.min.css';
+import AuthProvider from './context/Auth/AuthProvider';
+import AxiosProvider from './context/AxiosProvider';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Router>
-      <App />
+      <AuthProvider>
+        <AxiosProvider>
+          <QueryClientProvider client={queryClient}>
+            
+            <App />
+          </QueryClientProvider>
+        </AxiosProvider>
+      </AuthProvider>
     </Router>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 );

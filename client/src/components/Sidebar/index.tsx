@@ -3,12 +3,13 @@ import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../images/logo/logo.svg';
 
-import { BsArrowLeft } from "react-icons/bs";
-import { RxDashboard } from "react-icons/rx";
-import { IoIosArrowDown } from "react-icons/io";
-import { BsCalendar3Event } from "react-icons/bs";
-import { FaWpforms } from "react-icons/fa6";
-import { SlDocs } from "react-icons/sl";
+import { BsArrowLeft } from 'react-icons/bs';
+import { RxDashboard } from 'react-icons/rx';
+import { IoIosArrowDown } from 'react-icons/io';
+import { BsCalendar3Event } from 'react-icons/bs';
+import { FaWpforms } from 'react-icons/fa6';
+import { SlDocs } from 'react-icons/sl';
+import useAuth from '../../hooks/useAuth';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -18,13 +19,14 @@ interface SidebarProps {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const location = useLocation();
   const { pathname } = location;
+  const { user } = useAuth();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
 
   // close on click outside
@@ -98,6 +100,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
+
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/' || pathname.includes('dashboard')
@@ -156,75 +159,79 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
 
               {/* <!-- Menu Item Events Start --> */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === '/events' || pathname.includes('events')
-                }
-              >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <NavLink
-                        to="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/events' ||
-                            pathname.includes('events')) &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <BsCalendar3Event />
-                        Events
-                        <IoIosArrowDown
-                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
-                            open && 'rotate-180'
+              {user?.role == 'admin' ? (
+                <SidebarLinkGroup
+                  activeCondition={
+                    pathname === '/events' || pathname.includes('events')
+                  }
+                >
+                  {(handleClick, open) => {
+                    return (
+                      <React.Fragment>
+                        <NavLink
+                          to="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/events' ||
+                              pathname.includes('events')) &&
+                            'bg-graydark dark:bg-meta-4'
                           }`}
-                        />
-                      </NavLink>
-                      {/* <!-- Dropdown Menu Start --> */}
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && 'hidden'
-                        }`}
-                      >
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to="/events/event-list"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Event List
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/events/add-event"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Add Event
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
-                      {/* <!-- Dropdown Menu End --> */}
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
+                          }}
+                        >
+                          <BsCalendar3Event />
+                          Events
+                          <IoIosArrowDown
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
+                          />
+                        </NavLink>
+                        {/* <!-- Dropdown Menu Start --> */}
+                        <div
+                          className={`translate transform overflow-hidden ${
+                            !open && 'hidden'
+                          }`}
+                        >
+                          <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                            <li>
+                              <NavLink
+                                to="/events/event-list"
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Event List
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
+                                to="/events/add-event"
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Add Event
+                              </NavLink>
+                            </li>
+                          </ul>
+                        </div>
+                        {/* <!-- Dropdown Menu End --> */}
+                      </React.Fragment>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              ) : (
+                <></>
+              )}
               {/* <!-- Menu Item Events End --> */}
 
-              {/* <!-- Menu Item Events Start --> */}
+              {/* <!-- Menu Item Submissions Start --> */}
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/submissions' ||
@@ -281,7 +288,70 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
-              {/* <!-- Menu Item Events End --> */}
+              {/* <!-- Menu Item Submissions End --> */}
+
+              {/* <!-- Menu Item moderators Start --> */}
+              {user?.role == 'admin' ? (
+                <SidebarLinkGroup
+                  activeCondition={
+                    pathname === '/moderators' ||
+                    pathname.includes('moderators')
+                  }
+                >
+                  {(handleClick, open) => {
+                    return (
+                      <React.Fragment>
+                        <NavLink
+                          to="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/moderators' ||
+                              pathname.includes('moderators')) &&
+                            'bg-graydark dark:bg-meta-4'
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
+                          }}
+                        >
+                          <SlDocs />
+                          Moderators
+                          <IoIosArrowDown
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
+                          />
+                        </NavLink>
+                        {/* <!-- Dropdown Menu Start --> */}
+                        <div
+                          className={`translate transform overflow-hidden ${
+                            !open && 'hidden'
+                          }`}
+                        >
+                          <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                            <li>
+                              <NavLink
+                                to="/moderators/moderator-list"
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Moderators List
+                              </NavLink>
+                            </li>
+                          </ul>
+                        </div>
+                        {/* <!-- Dropdown Menu End --> */}
+                      </React.Fragment>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              ) : (
+                <></>
+              )}
+              {/* <!-- Menu Item moderators End --> */}
 
               {/* <!-- Menu Item Calendar --> */}
               <li>
