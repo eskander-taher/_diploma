@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext({});
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }:any) => {
   const [authState, dispatch] = useReducer(authReducer, authInitialState);
   const navigate = useNavigate();
 
-  let loginUser = (data) => {
+  let loginUser = (data:any) => {
     dispatch({
       type: authActions.SUCCESS_LOGIN,
       payload: { authState: data },
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   let logoutUser = () => {
     dispatch({ type: authActions.LOGOUT });
-    navigate("/login");
+    navigate("/auth/signin");
   };
 
   let contextData = {

@@ -1,8 +1,38 @@
+import { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import userThree from '../images/user/user-03.png';
 import DefaultLayout from '../layout/DefaultLayout';
+import useUpdateUser from '../api/users/useUpdateUser';
+import useGetUserProfile from '../api/users/useGetUserProfile';
 
 const Settings = () => {
+  const [data, setData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    faculty: '',
+    role: '',
+  });
+
+  const {
+    data: userDetails,
+    isLoading,
+    error,
+  }: any = useGetUserProfile({
+    options: {
+      onSuccess: (data: any) => {
+        setData(data);
+      },
+    },
+  });
+
+  const {} = useUpdateUser();
+
+    const handleChange = (e: any) => {
+      setData({ ...data, [e.target.name]: e.target.value });
+    };
+
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
@@ -24,7 +54,7 @@ const Settings = () => {
                         className="mb-3 block text-sm font-medium text-black dark:text-white"
                         htmlFor="fullName"
                       >
-                        Full Name
+                        Username
                       </label>
                       <div className="relative">
                         <span className="absolute left-4.5 top-4">
@@ -86,7 +116,7 @@ const Settings = () => {
                       className="mb-3 block text-sm font-medium text-black dark:text-white"
                       htmlFor="emailAddress"
                     >
-                      Email Address
+                      Email
                     </label>
                     <div className="relative">
                       <span className="absolute left-4.5 top-4">
@@ -117,7 +147,9 @@ const Settings = () => {
                       <input
                         className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         type="email"
-                        name="emailAddress"
+                        value={data.email}
+                        
+                        name="email"
                         id="emailAddress"
                         placeholder="devidjond45@gmail.com"
                         defaultValue="devidjond45@gmail.com"

@@ -8,7 +8,7 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Calendar from './pages/Calendar';
 import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/ECommerce';
+import Home from './pages/Home';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
@@ -20,6 +20,8 @@ import AddEvent from './pages/Events/AddEvent';
 import EventList from './pages/Events/EventList';
 import SubmissionList from './pages/Submissions/SubmissionList';
 import ModeratorsList from './pages/Moderators/ModeratorsList';
+import NewsList from './pages/News/NewsList';
+import NewsAdd from './pages/News/NewsAdd';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,8 +44,8 @@ function App() {
           index
           element={
             <>
-              <PageTitle title="eCommerce Dashboard | SMU" />
-              <ECommerce />
+              <PageTitle title="Home | SMU" />
+              <Home />
             </>
           }
         />
@@ -80,6 +82,24 @@ function App() {
             <>
               <PageTitle title="moderators list| SMU" />
               <ModeratorsList />
+            </>
+          }
+        />
+        <Route
+          path="/news/news-list"
+          element={
+            <>
+              <PageTitle title="news list| SMU" />
+              <NewsList />
+            </>
+          }
+        />
+        <Route
+          path="/news/add-news"
+          element={
+            <>
+              <PageTitle title="add news| SMU" />
+              <NewsAdd />
             </>
           }
         />

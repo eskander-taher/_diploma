@@ -7,22 +7,32 @@ import AuthIllestration from '../../components/AuthIllestration';
 import useRegister from '../../api/auth/useRegister';
 
 const SignUp: React.FC = () => {
-    const [data, setData] = useState({
-      name:'',
-      email: '',
-      password: '',
-      re_password:'',
+  const [data, setData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    re_password: '',
+  });
+  const { mutate, isLoading, error } = useRegister();
+
+  const handleChange = (e: any) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    mutate(data, {
+      onSuccess: (data) => {
+        console.log(data);
+        setData({
+          username: '',
+          email: '',
+          password: '',
+          re_password: '',
+        });
+      },
     });
-    const { mutate, isLoading, error } = useRegister();
-
-    const handleChange = (e) => {
-      setData({ ...data, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e) => {
-      mutate(data);
-    };
-
+  };
 
   return (
     <DefaultLayout>
@@ -55,13 +65,13 @@ const SignUp: React.FC = () => {
               <form>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Name
+                    Username
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      name="name"
-                      value={data.name}
+                      name="username"
+                      value={data.username}
                       onChange={handleChange}
                       placeholder="Enter your full name"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -204,6 +214,7 @@ const SignUp: React.FC = () => {
                 <div className="mb-5">
                   <input
                     type="submit"
+                    onClick={handleSubmit}
                     value="Create account"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
