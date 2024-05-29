@@ -2,7 +2,7 @@ import React from 'react';
 import useAxios from '../../hooks/useAxios';
 import { useQuery, useQueryClient } from 'react-query';
 
-const useGetUserProfile = () => {
+const useGetUserProfile = ({options}) => {
   const axios = useAxios();
 
   const deleteUserRequist = (userId) => {

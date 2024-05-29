@@ -7,7 +7,7 @@ export const authInitialState = {
   isLoading: true,
   error: null,
   user: localStorage.getItem("authTokens")
-    ? jwtDecode (JSON.parse(localStorage.getItem("authTokens")).access)
+    ? jwtDecode (JSON.parse(localStorage.getItem("authTokens")).token)
     : null,
 };
 
