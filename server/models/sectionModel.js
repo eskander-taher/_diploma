@@ -17,13 +17,11 @@ const sectionSchema = new Schema(
 			type: Number,
 			required: true,
 		},
-		mods: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: "Mod",
-				required: true,
-			},
-		],
+		mods: {
+			type: Schema.Types.ObjectId,
+			ref: "Mod",
+			required: true,
+		},
 	},
 	{
 		timestamps: true,

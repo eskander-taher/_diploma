@@ -2,6 +2,8 @@ const z = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require('../models/userModel'); // Adjust the path as necessary
+const Author = require('../models/authorModel'); // Adjust the path as necessary
+const Mod = require('../models/modModel'); // Adjust the path as necessary
 const sendVerificationEmail = require("../utils/sendVerificationEmail");
 
 const SALT_ROUNDS = 10;
@@ -10,6 +12,24 @@ const userRegistrationSchema = z.object({
   username: z.string().min(3),
   email: z.string().email(),
   password: z.string().min(3),
+  role: z.enum(["author", "mod"]),
+});
+
+const authorRegistrationSchema = userRegistrationSchema.extend({
+  participantStatus: z.enum(["young scientist", "specialist", "undergraduate", "masters", "graduate"]),
+  region: z.string().min(1),
+  city: z.string().min(1),
+  university: z.string().min(1),
+  faculty: z.string().min(1),
+  department: z.string().min(1),
+  course: z.number().int().min(1),
+  groupNumber: z.string().min(1),
+});
+
+const modRegistrationSchema = userRegistrationSchema.extend({
+  faculty: z.string().min(1),
+  department: z.string().min(1),
+  jobTitle: z.string().min(1),
 });
 
 exports.registerUser = async (req, res) => {
@@ -48,12 +68,86 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+exports.registerAuthor = async (req, res) => {
+  try {
+    // Validating author input
+    const author = authorRegistrationSchema.parse(req.body);
+
+    // Storing author input in db
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(author.password, salt);
+
+    const createdAuthor = new Author({
+      ...author,
+      password: hashedPassword,
+    });
+
+    await createdAuthor.save();
+
+    try {
+      const { id, email } = createdAuthor;
+      await sendVerificationEmail(id, email);
+      res.json({
+        success: true,
+        message: `Verification message was sent to email: ${email}`,
+      });
+    } catch (err) {
+      console.error("Error sending email:", err);
+      res.status(500).json({
+        success: false,
+        error: "Failed to send verification email.",
+      });
+    }
+  } catch (error) {
+    console.error("Author registration error:", error);
+    res.json({ success: false, error });
+  }
+};
+
+exports.registerMod = async (req, res) => {
+  try {
+    // Validating mod input
+    const mod = modRegistrationSchema.parse(req.body);
+
+    // Storing mod input in db
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(mod.password, salt);
+
+    const createdMod = new Mod({
+      ...mod,
+      password: hashedPassword,
+    });
+
+    await createdMod.save();
+
+    try {
+      const { id, email } = createdMod;
+      await sendVerificationEmail(id, email);
+      res.json({
+        success: true,
+        message: `Verification message was sent to email: ${email}`,
+      });
+    } catch (err) {
+      console.error("Error sending email:", err);
+      res.status(500).json({
+        success: false,
+        error: "Failed to send verification email.",
+      });
+    }
+  } catch (error) {
+    console.error("Mod registration error:", error);
+    res.json({ success: false, error });
+  }
+};
+
+// Existing functions...
+
 exports.verifyEmail = async (req, res) => {
   try {
     const verificationToken = req.query.token;
     const user = jwt.verify(verificationToken, process.env.SECRET);
 
-    const verifiedUser = await User.findByIdAndUpdate(user.id, { verified: true }, { new: true });
+    const verifiedUser = await User.findByIdAndUpdate(user.id, { verifiedByEmail: true }, { new: true });
     res.render("emailVerified", { name: verifiedUser.username, email: verifiedUser.email });
   } catch (error) {
     console.log(error);
@@ -89,7 +183,6 @@ exports.loginUser = async (req, res) => {
   try {
     // Validating user input
     const { email, password } = req.body;
-    
 
     const userLoginSchema = z.object({
       email: z.string().email(),

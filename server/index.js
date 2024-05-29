@@ -27,14 +27,8 @@ const logger = require("./middleware/logger");
 app.use(logger);
 
 // resources routes
-app.use("/api", require("./routes/adminRoutes"))
-app.use("/api", require('./routes/eventRoutes'))
-app.use("/api", require('./routes/sectionRoutes'))
-app.use("/api", require("./routes/userRoutes"));
+app.use("/api", require("./routes/authRoutes"));
 
-// app.use('/api', require("./routes/participationRoutes"));
-// app.use('/api', require("./routes/sectionRoutes"));
-// app.use('/api', require("./routes/reviewRoutes"));
 
 
 // Middleware setup: Formating responding errors
