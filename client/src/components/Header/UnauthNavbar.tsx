@@ -13,10 +13,16 @@ const UnauthNavbar = () => {
         <div className="flex items-center gap-3 2xsm:gap-7">
           <div className="space-x-2">
             <Link
-              to="/auth/signup"
+              to="/auth/signup/mod"
               className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
             >
-              sign up
+              be a moderator
+            </Link>
+            <Link
+              to="/auth/signup/author"
+              className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+            >
+              be an author
             </Link>
             <Link
               to="/auth/signin"

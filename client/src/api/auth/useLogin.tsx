@@ -5,7 +5,7 @@ const useLogin = () => {
   const axios = useAxios();
 
   const userRequest = (data) => {
-    return axios({ url: `api/users/login/`, data: data, method: "POST" });
+    return axios({ url: `api/login/`, data: data, method: "POST" });
   };
 
   const request = useMutation(userRequest,{

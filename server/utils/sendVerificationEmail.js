@@ -2,11 +2,15 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 const transporter = nodemailer.createTransport({
-	host: 'smtp.gmail.com',
-	auth: {
-		user: process.env.EMAIL_ADDRESS,
-		pass: process.env.EMAIL_PASSWORD,
-	},
+  host: "smtp.gmail.com",
+  port: 465,
+  auth: {
+    user: process.env.EMAIL_ADDRESS,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 const generateVerificationLink = (userId) => {

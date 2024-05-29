@@ -22,6 +22,9 @@ import SubmissionList from './pages/Submissions/SubmissionList';
 import ModeratorsList from './pages/Moderators/ModeratorsList';
 import NewsList from './pages/News/NewsList';
 import NewsAdd from './pages/News/NewsAdd';
+import AddSubmissions from './pages/Submissions/AddSubmissions';
+import SignUpModerator from './pages/Authentication/SignUpModerator';
+import SignUpAuthor from './pages/Authentication/SignUpAuthor';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -73,6 +76,15 @@ function App() {
             <>
               <PageTitle title="submission list| SMU" />
               <SubmissionList />
+            </>
+          }
+        />
+        <Route
+          path="/submissions/add-submission"
+          element={
+            <>
+              <PageTitle title="submission list| SMU" />
+              <AddSubmissions />
             </>
           }
         />
@@ -195,11 +207,20 @@ function App() {
           }
         />
         <Route
-          path="/auth/signup"
+          path="/auth/signup/mod"
           element={
             <>
               <PageTitle title="Signup | SMU" />
-              <SignUp />
+              <SignUpModerator />
+            </>
+          }
+        />
+        <Route
+          path="/auth/signup/author"
+          element={
+            <>
+              <PageTitle title="Signup | SMU" />
+              <SignUpAuthor />
             </>
           }
         />

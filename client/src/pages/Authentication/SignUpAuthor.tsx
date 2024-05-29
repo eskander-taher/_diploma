@@ -5,9 +5,9 @@ import Logo from '../../images/logo/logo.svg';
 import DefaultLayout from '../../layout/DefaultLayout';
 import AuthIllestration from '../../components/AuthIllestration';
 import ModeratorSignupForm from './ModeratorSignupForm';
+import AuthorSignupForm from './AuthorSignupForm';
 
-const SignUp: React.FC = () => {
-
+const SignUpAuthor: React.FC = () => {
   return (
     <DefaultLayout>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -33,10 +33,10 @@ const SignUp: React.FC = () => {
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign Up to TailAdmin
+                Sign Up as an author
               </h2>
 
-              <ModeratorSignupForm />
+              <AuthorSignupForm />
             </div>
           </div>
         </div>
@@ -45,4 +45,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default SignUpAuthor;
