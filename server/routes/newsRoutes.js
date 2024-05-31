@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const newsController = require('./newsController');
+const newsController = require('../controllers/newsController');
 
 // Define routes
 router.post('/news', newsController.createNews);
