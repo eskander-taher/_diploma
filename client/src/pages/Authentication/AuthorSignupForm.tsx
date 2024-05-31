@@ -67,7 +67,7 @@ const AuthorSignupForm = () => {
       },
       onError(error:any, variables, context) {
         setAlert({
-          type: 'success',
+          type: 'error',
           message: error.response.data.error,
           active: true,
         });
