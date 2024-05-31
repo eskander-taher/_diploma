@@ -85,7 +85,6 @@ const submissionSchema = new Schema(
 		grader: {
 			type: Schema.Types.ObjectId,
 			ref: "Mod",
-			required: true,
 		},
 	},
 	{
