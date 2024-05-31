@@ -126,6 +126,7 @@ exports.registerMod = async (req, res) => {
 		const createdMod = new Mod({
 			...mod,
 			password: hashedPassword,
+			role: "mod",
 		});
 
 		await createdMod.save();
@@ -150,7 +151,7 @@ exports.registerMod = async (req, res) => {
 	}
 };
 
-exports.verifyEmail = async (req, res) => {
+exports.verifyByEmail = async (req, res) => {
 	try {
 		const verificationToken = req.query.token;
 		const user = jwt.verify(verificationToken, process.env.SECRET);
@@ -161,6 +162,29 @@ exports.verifyEmail = async (req, res) => {
 			{ new: true }
 		);
 		res.render("emailVerified", { name: verifiedUser.username, email: verifiedUser.email });
+	} catch (error) {
+		console.log(error);
+		res.json({
+			success: false,
+			error,
+		});
+	}
+};
+
+exports.verifyByAdmin = async (req, res) => {
+	try {
+		const id = req.params.id;
+
+		const verifiedMod = await Mod.findByIdAndUpdate(
+			id,
+			{ verifiedByAdmin: true },
+			{ new: true }
+		);
+		res.json({
+			success: true,
+			message: `mod is verfied by admin successfully`,
+			data: verifiedMod,
+		});
 	} catch (error) {
 		console.log(error);
 		res.json({

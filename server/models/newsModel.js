@@ -7,7 +7,7 @@ const newsSchema = new Schema(
             type: String,
             trim: true,
         },
-        description: {
+        content: {
             type: String,
             trim: true,
         },

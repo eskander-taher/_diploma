@@ -8,19 +8,18 @@ const sectionSchema = new Schema(
 			required: true,
 			trim: true,
 		},
-		event: {
-			type: Schema.Types.ObjectId,
-			ref: "Event",
-			required: true,
-		},
 		order: {
 			type: Number,
 			required: true,
 		},
-		mods: {
+		mod: {
 			type: Schema.Types.ObjectId,
 			ref: "Mod",
 			required: true,
+		},
+		event: {
+			type: Schema.Types.ObjectId,
+			ref: "Event",
 		},
 	},
 	{
