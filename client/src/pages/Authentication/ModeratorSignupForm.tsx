@@ -23,7 +23,12 @@ const formFields = {
 
 const ModeratorSignupForm = () => {
     const [data, setData] = useState({ ...formFields });
-    const { mutate, isLoading, error } = useRegisterModerator();
+    const { mutate, isLoading, error ,isSuccess} = useRegisterModerator();
+    const [alert,setAlert] = useState({
+      type:'',
+      message:'',
+      active:'',
+    })
 
     const handleChange = (e: any) => {
       setData({ ...data, [e.target.name]: e.target.value });
@@ -37,6 +42,9 @@ const ModeratorSignupForm = () => {
             ...formFields,
           });
         },
+        onError:(data)=>{
+          console.log(data)
+        }
       });
     };
     return (
