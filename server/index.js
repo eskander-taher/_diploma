@@ -29,8 +29,7 @@ app.use(logger);
 // resources routes
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/eventRoutes"));
-
-app.use("/api", require("./routes/eventRoutes"));
+app.use("/api", require("./routes/newsRoutes"));
 
 // Middleware setup: Formating responding errors
 const { errorHandler } = require("./middleware/errorMiddleware");

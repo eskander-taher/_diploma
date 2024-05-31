@@ -30,16 +30,18 @@ exports.createEvent = async (req, res) => {
 		const savedSections = [];
 
 		// Create each section
-		for (const sectionData of data.sections) {
-			const section = new Section({
-				name: sectionData.name,
-				order: sectionData.order,
-				mod: sectionData.mod,
-				event: savedEvent._id,
-			});
+		if (sectionData.length > 0) {
+			for (const sectionData of data.sections) {
+				const section = new Section({
+					name: sectionData.name,
+					order: sectionData.order,
+					mod: sectionData.mod,
+					event: savedEvent._id,
+				});
 
-			const savedSection = await section.save({ session });
-			savedSections.push(savedSection._id);
+				const savedSection = await section.save({ session });
+				savedSections.push(savedSection._id);
+			}
 		}
 
 		// Update the event with all section references
