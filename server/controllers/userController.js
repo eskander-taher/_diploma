@@ -9,7 +9,6 @@ const sendVerificationEmail = require("../utils/sendVerificationEmail");
 const SALT_ROUNDS = 10;
 
 const userRegistrationSchema = z.object({
-  username: z.string().min(3),
   email: z.string().email(),
   password: z.string().min(3),
   role: z.enum(["author", "mod"]),
@@ -212,6 +211,13 @@ exports.loginUser = async (req, res) => {
         success: false,
         error: "Invalid password.",
       });
+    }
+
+    if(!existingUser.verifiedByEmail){
+      return res.status(401).json({
+        success: false,
+        error: "Email not verified"
+      })
     }
 
     // Generate JWT token
