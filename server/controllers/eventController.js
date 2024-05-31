@@ -11,54 +11,127 @@ const eventSchema = z.object({
 });
 
 exports.createEvent = async (req, res) => {
-	const data = req.body;
+    const data = req.body;
 
-	const session = await mongoose.startSession();
-	session.startTransaction();
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-	try {
-		const event = new Event({
-			name: data.name,
-			description: data.description,
-			status: data.status || "draft",
-			createdBy: data.createdBy,
-		});
+    try {
+        const event = new Event({
+            name: data.name,
+            description: data.description,
+            status: data.status || "draft",
+            createdBy: data.createdBy,
+        });
 
-		const savedEvent = await event.save({ session });
+        const savedEvent = await event.save({ session });
 
-		// Array to hold the created sections
-		const savedSections = [];
+        // Array to hold the created sections
+        const savedSections = [];
 
-		// Create each section
-		if (sectionData.length > 0) {
-			for (const sectionData of data.sections) {
-				const section = new Section({
-					name: sectionData.name,
-					order: sectionData.order,
-					mod: sectionData.mod,
-					event: savedEvent._id,
-				});
+        // Create each section
+        if (data.sections && data.sections.length > 0) {
+            for (const sectionData of data.sections) {
+                const section = new Section({
+                    name: sectionData.name,
+                    order: sectionData.order,
+                    mod: sectionData.mod,
+                    event: savedEvent._id,
+                });
 
-				const savedSection = await section.save({ session });
-				savedSections.push(savedSection._id);
-			}
-		}
+                const savedSection = await section.save({ session });
+                savedSections.push(savedSection._id);
+            }
+        }
 
-		// Update the event with all section references
-		savedEvent.sections = savedSections;
-		await savedEvent.save({ session });
+        // Update the event with all section references
+        savedEvent.sections = savedSections;
+        await savedEvent.save({ session });
 
-		await session.commitTransaction();
-		res.json(savedEvent);
-	} catch (error) {
-		await session.abortTransaction();
-		res.status(500).json({
-			error: "An error occurred while creating the event.",
-			details: error.message,
-		});
-	} finally {
-		session.endSession();
-	}
+        await session.commitTransaction();
+        res.json(savedEvent);
+    } catch (error) {
+        await session.abortTransaction();
+        res.status(500).json({
+            error: "An error occurred while creating the event.",
+            details: error.message,
+        });
+    } finally {
+        session.endSession();
+    }
+};
+
+exports.updateEventById = async (req, res) => {
+    const eventId = req.params.id;
+    const data = req.body;
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        // Find the event by ID
+        const event = await Event.findById(eventId).session(session);
+
+        if (!event) {
+            await session.abortTransaction();
+            return res.status(404).json({ error: "Event not found." });
+        }
+
+        // Update event fields
+        event.name = data.name || event.name;
+        event.description = data.description || event.description;
+        event.status = data.status || event.status;
+        event.createdBy = data.createdBy || event.createdBy;
+
+        // Array to hold the updated sections
+        const updatedSections = [];
+
+        // Update or create sections
+        if (data.sections && data.sections.length > 0) {
+            for (const sectionData of data.sections) {
+                let section;
+                if (sectionData._id) {
+                    // Update existing section
+                    section = await Section.findById(sectionData._id).session(session);
+                    if (section) {
+                        section.name = sectionData.name || section.name;
+                        section.order = sectionData.order || section.order;
+                        section.mod = sectionData.mod || section.mod;
+                    } else {
+                        // If section ID is provided but not found, abort transaction
+                        await session.abortTransaction();
+                        return res.status(404).json({ error: `Section not found: ${sectionData._id}` });
+                    }
+                } else {
+                    // Create new section
+                    section = new Section({
+                        name: sectionData.name,
+                        order: sectionData.order,
+                        mod: sectionData.mod,
+                        event: event._id,
+                    });
+                }
+
+                const savedSection = await section.save({ session });
+                updatedSections.push(savedSection._id);
+            }
+        }
+
+        // Update the event with all section references
+        event.sections = updatedSections;
+        const savedEvent = await event.save({ session });
+
+        await session.commitTransaction();
+        res.json(savedEvent);
+    } catch (error) {
+        await session.abortTransaction();
+        res.status(500).json({
+            error: "An error occurred while updating the event.",
+            details: error.message,
+        });
+    } finally {
+        session.endSession();
+    }
 };
 
 exports.getAllEvents = async (req, res) => {
@@ -82,29 +155,6 @@ exports.getEventById = async (req, res) => {
 		if (!event) {
 			return res.status(404).json({ error: "Event not found" });
 		}
-		res.status(200).json(event);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-};
-
-exports.updateEventById = async (req, res) => {
-	const validation = eventSchema.partial().safeParse(req.body);
-
-	if (!validation.success) {
-		return res.status(400).json({ error: validation.error.errors });
-	}
-
-	try {
-		const event = await Event.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-			runValidators: true,
-		}).exec();
-
-		if (!event) {
-			return res.status(404).json({ error: "Event not found" });
-		}
-
 		res.status(200).json(event);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

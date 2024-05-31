@@ -41,18 +41,28 @@ const modRegistrationSchema = userRegistrationSchema.extend({
 exports.registerUser = async (req, res) => {
 	try {
 		// Validating user input
-		const user = userRegistrationSchema.parse(req.body);
+		const user = null;
+		try {
+			user = userRegistrationSchema.parse(req.body);
+		} catch (error) {
+			res.status(401).json({ success: false, error, message: "Bad request" });
+		}
 
 		// Storing user input in db
-		const salt = await bcrypt.genSalt(SALT_ROUNDS);
-		const hashedPassword = await bcrypt.hash(user.password, salt);
+		const createdUser = null;
+		try {
+			const salt = await bcrypt.genSalt(SALT_ROUNDS);
+			const hashedPassword = await bcrypt.hash(user.password, salt);
 
-		const createdUser = new User({
-			...user,
-			password: hashedPassword,
-		});
+			createdUser = new User({
+				...user,
+				password: hashedPassword,
+			});
 
-		await createdUser.save();
+			await createdUser.save();
+		} catch (error) {
+			res.status(500).json({ success: false, error, message: "Could not store data in db" });
+		}
 
 		try {
 			const { id, email } = createdUser;
@@ -70,28 +80,41 @@ exports.registerUser = async (req, res) => {
 		}
 	} catch (error) {
 		console.error("User registration error:", error);
-		res.json({ success: false, error });
+		res.status(500).json({ success: false, error });
 	}
 };
 
 exports.registerAuthor = async (req, res) => {
 	try {
 		// Validating author input
-		const author = authorRegistrationSchema.parse({
-			...req.body,
-			course: parseInt(req.body.course),
-		});
+		const author = null;
+		try {
+			author = authorRegistrationSchema.parse({
+				...req.body,
+				course: parseInt(req.body.course),
+			});
+		} catch (error) {
+			res.status(401).json({ success: false, error, message: "Bad request" });
+		}
 
 		// Storing author input in db
-		const salt = await bcrypt.genSalt(SALT_ROUNDS);
-		const hashedPassword = await bcrypt.hash(author.password, salt);
+		const createdAuthor = null;
+		try {
+			const salt = await bcrypt.genSalt(SALT_ROUNDS);
+			const hashedPassword = await bcrypt.hash(author.password, salt);
 
-		const createdAuthor = new Author({
-			...author,
-			password: hashedPassword,
-		});
-
-		await createdAuthor.save();
+			createdAuthor = new Author({
+				...author,
+				password: hashedPassword,
+			});
+			await createdAuthor.save();
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				error,
+				message: "Could not store the data in db",
+			});
+		}
 
 		try {
 			const { id, email } = createdAuthor;
@@ -109,26 +132,36 @@ exports.registerAuthor = async (req, res) => {
 		}
 	} catch (error) {
 		console.error("Author registration error:", error);
-		res.json({ success: false, error });
+		res.status(401).json({ success: false, error });
 	}
 };
 
 exports.registerMod = async (req, res) => {
 	try {
 		// Validating mod input
-		const mod = modRegistrationSchema.parse(req.body);
+		const mod = null;
+		try {
+			mod = modRegistrationSchema.parse(req.body);
+		} catch (error) {
+			res.status(401).json({ success: false, error, message: "Bad request" });
+		}
 
 		// Storing mod input in db
-		const salt = await bcrypt.genSalt(SALT_ROUNDS);
-		const hashedPassword = await bcrypt.hash(mod.password, salt);
+		const createdMod = null;
+		try {
+			const salt = await bcrypt.genSalt(SALT_ROUNDS);
+			const hashedPassword = await bcrypt.hash(mod.password, salt);
 
-		const createdMod = new Mod({
-			...mod,
-			password: hashedPassword,
-			role: "mod",
-		});
+			const createdMod = new Mod({
+				...mod,
+				password: hashedPassword,
+				role: "mod",
+			});
 
-		await createdMod.save();
+			await createdMod.save();
+		} catch (error) {
+			res.status(500).json({ success: false, error, message: "Could not store data in db" });
+		}
 
 		try {
 			const { id, email } = createdMod;
@@ -146,7 +179,7 @@ exports.registerMod = async (req, res) => {
 		}
 	} catch (error) {
 		console.error("Mod registration error:", error);
-		res.json({ success: false, error });
+		res.status(500).json({ success: false, error });
 	}
 };
 
