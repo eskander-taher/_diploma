@@ -14,7 +14,7 @@ const eventSchema = new Schema(
 		},
 		status: {
 			type: String,
-			enum: ["draft", "comming", "going", "finished"],
+			enum: ["draft", "upcoming", "going", "finished"],
 			default: "draft",
 		},
 		sections: [

@@ -14,8 +14,11 @@ router.post("/register/author", authController.registerAuthor);
 // Mod registration route
 router.post("/register/mod", authController.registerMod);
 
+// Mod registration route
+router.put("/verify-mod/:id", authController.verifyByAdmin);
+
 // Email verification route
-router.get("/verify-email", authController.verifyEmail);
+router.get("/verify-email", authController.verifyByAdmin);
 
 // Change user role route
 router.put("/change-role/:userId", authController.changeUserRole);
