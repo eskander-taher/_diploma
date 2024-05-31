@@ -9,7 +9,6 @@ const sendVerificationEmail = require("../utils/sendVerificationEmail");
 const SALT_ROUNDS = 10;
 
 const userRegistrationSchema = z.object({
-	username: z.string().min(3),
 	email: z.string().email(),
 	password: z.string().min(3),
 	firstName: z.string().min(1),
