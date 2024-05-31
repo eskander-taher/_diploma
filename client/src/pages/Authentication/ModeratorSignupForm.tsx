@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { MdOutlinePhoneEnabled } from 'react-icons/md';
+import { MdClose, MdOutlinePhoneEnabled } from 'react-icons/md';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 import { IoBookOutline } from 'react-icons/io5';
 import useRegister from '../../api/auth/useRegister';
@@ -51,8 +51,9 @@ const ModeratorSignupForm = () => {
           });
         },
         onError(error: any, variables, context) {
+          console.log(error)
           setAlert({
-            type: 'success',
+            type: 'error',
             message: error.response.data.error,
             active: true,
           });

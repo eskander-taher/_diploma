@@ -45,7 +45,7 @@ exports.registerUser = async (req, res) => {
 		try {
 			user = userRegistrationSchema.parse(req.body);
 		} catch (error) {
-			res.status(401).json({ success: false, error, message: "Bad request" });
+			return res.status(401).json({ success: false, error, message: "Bad request" });
 		}
 
 		// Storing user input in db
@@ -61,7 +61,9 @@ exports.registerUser = async (req, res) => {
 
 			await createdUser.save();
 		} catch (error) {
-			res.status(500).json({ success: false, error, message: "Could not store data in db" });
+			return res
+				.status(500)
+				.json({ success: false, error, message: "Could not store data in db" });
 		}
 
 		try {
@@ -73,14 +75,14 @@ exports.registerUser = async (req, res) => {
 			});
 		} catch (err) {
 			console.error("Error sending email:", err);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				error: "Failed to send verification email.",
 			});
 		}
 	} catch (error) {
 		console.error("User registration error:", error);
-		res.status(500).json({ success: false, error });
+		return res.status(500).json({ success: false, error });
 	}
 };
 
@@ -132,27 +134,27 @@ exports.registerAuthor = async (req, res) => {
 		}
 	} catch (error) {
 		console.error("Author registration error:", error);
-		res.status(401).json({ success: false, error });
+		res.status(500).json({ success: false, error });
 	}
 };
 
 exports.registerMod = async (req, res) => {
 	try {
 		// Validating mod input
-		const mod = null;
+		let mod = null;
 		try {
 			mod = modRegistrationSchema.parse(req.body);
 		} catch (error) {
-			res.status(401).json({ success: false, error, message: "Bad request" });
+			return res.status(401).json({ success: false, error, message: "Bad request" });
 		}
 
 		// Storing mod input in db
-		const createdMod = null;
+		let createdMod = null;
 		try {
 			const salt = await bcrypt.genSalt(SALT_ROUNDS);
 			const hashedPassword = await bcrypt.hash(mod.password, salt);
 
-			const createdMod = new Mod({
+			createdMod = new Mod({
 				...mod,
 				password: hashedPassword,
 				role: "mod",
@@ -160,7 +162,9 @@ exports.registerMod = async (req, res) => {
 
 			await createdMod.save();
 		} catch (error) {
-			res.status(500).json({ success: false, error, message: "Could not store data in db" });
+			return res
+				.status(500)
+				.json({ success: false, error, message: "Could not store data in db" });
 		}
 
 		try {
@@ -171,15 +175,14 @@ exports.registerMod = async (req, res) => {
 				message: `Verification message was sent to email: ${email}`,
 			});
 		} catch (err) {
-			console.error("Error sending email:", err);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				error: "Failed to send verification email.",
 			});
 		}
 	} catch (error) {
 		console.error("Mod registration error:", error);
-		res.status(500).json({ success: false, error });
+		return res.status(500).json({ success: false, error });
 	}
 };
 
@@ -312,6 +315,43 @@ exports.loginUser = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
 	try {
 		const users = await User.find();
+
+		res.json({
+			success: true,
+			data: users,
+		});
+	} catch (error) {
+		res.json({ success: false, error });
+	}
+};
+exports.getAllUsers = async (req, res) => {
+	try {
+		const users = await User.find();
+
+		res.json({
+			success: true,
+			data: users,
+		});
+	} catch (error) {
+		res.json({ success: false, error });
+	}
+};
+
+exports.getAllMods = async (req, res) => {
+	try {
+		const users = await User.find({ role: "mod" });
+
+		res.json({
+			success: true,
+			data: users,
+		});
+	} catch (error) {
+		res.json({ success: false, error });
+	}
+};
+exports.getAllAuthors = async (req, res) => {
+	try {
+		const users = await User.find({ role: "author" });
 
 		res.json({
 			success: true,

@@ -9,7 +9,7 @@ const index = () => {
     <DefaultLayout>
       <h1 className="text-3xl mb-5 text-primary font-semibold">News</h1>
       <div className="flex flex-wrap gap-5">
-        {isSuccess ? data.map((item: any) => <NewsCard {...item} />) : <></>}
+        {/* {isSuccess ? data?.map((item: any) => <NewsCard {...item} />) : <></>} */}
         <NewsCard title="Hello" image="cards-01.png" />
         <NewsCard title="Hello" image="cards-01.png" />
         <NewsCard title="Hello" image="cards-01.png" />
