@@ -214,6 +214,9 @@ const AddEvent = () => {
                 setDescription={setDescription}
               />
             </div>
+            <div className="ql-editor">
+              <div dangerouslySetInnerHTML={{ __html: description }} />
+            </div>
 
             {/* <button
               type="submit"

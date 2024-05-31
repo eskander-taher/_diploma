@@ -13,7 +13,7 @@ export const useGetEvent = (eventId) => {
   };
 
   const request = useQuery({
-    queryKey: ['events', eventId],
+    queryKey: ['events',eventId],
     queryFn: LisrEventsRequest,
   });
 

@@ -109,7 +109,7 @@ function App() {
           }
         />
         <Route
-          path="/events/:eventId/submissions"
+          path="/events/:eventId/add-submission"
           element={
             <>
               <PageTitle title="submission list| SMU" />

@@ -12,7 +12,7 @@ const Events = () => {
     <DefaultLayout>
       <div className="flex flex-wrap gap-5 flex-col">
         {isLoading ? <></>:data?.data?.map((event)=>{
-          return <EventCard {...event} key={event}/>;
+          return  <EventCard {...event} key={event}/>;
         })}
 
       </div>

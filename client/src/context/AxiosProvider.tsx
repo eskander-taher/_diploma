@@ -20,8 +20,8 @@ const AxiosProvider = ({ children }) => {
     });
 
     axios.interceptors.request.use((config) => {
-      if (authState?.access) {
-        config.headers.Authorization = `Bearer ${authState?.access}`;
+      if (authState?.token) {
+        config.headers.Authorization = `Bearer ${authState?.token}`;
       }
       return config;
     });
