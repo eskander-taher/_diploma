@@ -18,7 +18,7 @@ router.post("/register/mod", authController.registerMod);
 router.put("/verify-mod/:id", authController.verifyByAdmin);
 
 // Email verification route
-router.get("/verify-email", authController.verifyByAdmin);
+router.get("/verify-email", authController.verifyByEmail);
 
 // Change user role route
 router.put("/change-role/:userId", authController.changeUserRole);
