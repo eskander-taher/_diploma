@@ -249,6 +249,14 @@ exports.loginUser = async (req, res) => {
 			});
 		}
 
+		
+		if (!existingUser.verifiedByEmail) {
+			return res.status(401).json({
+				success: false,
+				error: "Email not verified",
+			});
+		}
+
 		// Generate JWT token
 		const token = jwt.sign(
 			{
