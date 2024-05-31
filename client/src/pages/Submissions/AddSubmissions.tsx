@@ -1,38 +1,52 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
 import useCreateSubmissions from '../../api/submissions/useCreateSubmissions';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import useLisrSections from '../../api/sections/useListSections';
 
 const formFields = {
   workName: '',
   event: '',
   section: '',
-  file: '',
+  file: null,
   supervisorName: '',
   email: '',
   phoneNumber: '',
   password: '',
 };
 const AddSubmissions = () => {
-    const [data, setData] = useState({ ...formFields });
-    const { mutate, isLoading, error } = useCreateSubmissions();
+  const { eventId } = useParams();
+  const [data, setData] = useState({ ...formFields, event: eventId });
+  const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+  
+  const {
+    data: sections,
+    isLoading: isSectionsLoading,
+    error: sectionError,
+  } = useLisrSections();
+  const { mutate, isLoading, error } = useCreateSubmissions();
+  
+  const changeTextColor = () => {
+    setIsOptionSelected(true);
+  };
 
-    const handleChange = (e: any) => {
-      setData({ ...data, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e: any) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = (e: any) => {
-      e.preventDefault();
-      mutate(data, {
-        onSuccess: (data) => {
-          setData({
-            ...formFields,
-          });
-        },
-      });
-    };
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log(data);
+    mutate(data, {
+      onSuccess: (data) => {
+        setData({
+          ...formFields,
+        });
+      },
+    });
+  };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Submission" />
@@ -53,14 +67,14 @@ const AddSubmissions = () => {
                 name="workName"
                 value={data.workName}
                 onChange={handleChange}
-                placeholder="Enter your First name"
+                placeholder="Enter your Work name"
                 className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               />
             </div>
           </div>
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
-              supervisor name
+              Supervisor name
             </label>
             <div className="relative">
               <input
@@ -68,74 +82,92 @@ const AddSubmissions = () => {
                 name="supervisorName"
                 value={data.supervisorName}
                 onChange={handleChange}
-                placeholder="Enter your Last name"
+                placeholder="Enter your Supervisor name"
                 className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               />
             </div>
           </div>
-
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Last name
+              Select Section
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                name="lastName"
-                value={data.lastName}
-                onChange={handleChange}
-                placeholder="Enter your Last name"
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-              />
+
+            <div className="relative z-20 bg-white dark:bg-form-input">
+              <select
+                value={data.section}
+                placeholder="Select Section"
+                name="section"
+                onChange={(e) => {
+                  handleChange(e);
+                  changeTextColor();
+                }}
+                className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  isOptionSelected ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                {isLoading ? (
+                  <option
+                    value=""
+                    disabled
+                    className="text-body dark:text-bodydark"
+                  >
+                    loading
+                  </option>
+                ) : (
+                  <>
+                    <option
+                      value=""
+                      disabled
+                      className="text-body dark:text-bodydark"
+                    >
+                      Select Section
+                    </option>
+                    {sections?.data?.map((section: any) => {
+                      return (
+                        <option
+                          value={section.id}
+                          className="text-body dark:text-bodydark"
+                        >
+                          {section.name}
+                        </option>
+                      );
+                    })}
+                  </>
+                )}
+                <option value="UK" className="text-body dark:text-bodydark">
+                  UK
+                </option>
+              </select>
+              <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g opacity="0.8">
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                      fill="#637381"
+                    ></path>
+                  </g>
+                </svg>
+              </span>
             </div>
           </div>
-
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Username
+              Attach file
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                name="username"
-                value={data.username}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-              />
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Email
-            </label>
-            <div className="relative">
-              <input
-                type="email"
-                name="email"
-                value={data.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-              />
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                name="password"
-                value={data.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-              />
-            </div>
+            <input
+              type="file"
+              name="file"
+              onChange={(e) => setData({ ...data, file: e.target.files[0] })}
+              className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
+            />
           </div>
 
           <div className="mb-5">
@@ -143,7 +175,7 @@ const AddSubmissions = () => {
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading}
-              value={isLoading ? 'Loading' : 'Create account'}
+              value={isLoading ? 'Loading' : 'Submit'}
               className={`w-full  rounded-lg border border-primary  p-4 text-white transition ${
                 isLoading
                   ? ' bg-slate-500'
@@ -151,56 +183,10 @@ const AddSubmissions = () => {
               }`}
             />
           </div>
-
-          <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
-            <span>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g clipPath="url(#clip0_191_13499)">
-                  <path
-                    d="M19.999 10.2217C20.0111 9.53428 19.9387 8.84788 19.7834 8.17737H10.2031V11.8884H15.8266C15.7201 12.5391 15.4804 13.162 15.1219 13.7195C14.7634 14.2771 14.2935 14.7578 13.7405 15.1328L13.7209 15.2571L16.7502 17.5568L16.96 17.5774C18.8873 15.8329 19.9986 13.2661 19.9986 10.2217"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M10.2055 19.9999C12.9605 19.9999 15.2734 19.111 16.9629 17.5777L13.7429 15.1331C12.8813 15.7221 11.7248 16.1333 10.2055 16.1333C8.91513 16.1259 7.65991 15.7205 6.61791 14.9745C5.57592 14.2286 4.80007 13.1801 4.40044 11.9777L4.28085 11.9877L1.13101 14.3765L1.08984 14.4887C1.93817 16.1456 3.24007 17.5386 4.84997 18.5118C6.45987 19.4851 8.31429 20.0004 10.2059 19.9999"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M4.39899 11.9777C4.1758 11.3411 4.06063 10.673 4.05807 9.99996C4.06218 9.32799 4.1731 8.66075 4.38684 8.02225L4.38115 7.88968L1.19269 5.4624L1.0884 5.51101C0.372763 6.90343 0 8.4408 0 9.99987C0 11.5589 0.372763 13.0963 1.0884 14.4887L4.39899 11.9777Z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M10.2059 3.86663C11.668 3.84438 13.0822 4.37803 14.1515 5.35558L17.0313 2.59996C15.1843 0.901848 12.7383 -0.0298855 10.2059 -3.6784e-05C8.31431 -0.000477834 6.4599 0.514732 4.85001 1.48798C3.24011 2.46124 1.9382 3.85416 1.08984 5.51101L4.38946 8.02225C4.79303 6.82005 5.57145 5.77231 6.61498 5.02675C7.65851 4.28118 8.9145 3.87541 10.2059 3.86663Z"
-                    fill="#EB4335"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_191_13499">
-                    <rect width="20" height="20" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </span>
-            Sign up with Google
-          </button>
-
-          <div className="mt-6 text-center">
-            <p>
-              Already have an account?{' '}
-              <Link to="/auth/signin" className="text-primary">
-                Sign in
-              </Link>
-            </p>
-          </div>
         </form>
       </div>
     </DefaultLayout>
   );
-}
+};
 
-export default AddSubmissions
+export default AddSubmissions;

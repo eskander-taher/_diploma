@@ -314,7 +314,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="phoneNumber"
             value={data.phoneNumber}
             onChange={handleChange}
@@ -337,7 +337,7 @@ const AuthorSignupForm = () => {
             name="city"
             value={data.city}
             onChange={handleChange}
-            placeholder="Re-enter your password"
+            placeholder="Re-enter your text"
             className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
           />
 
@@ -361,7 +361,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="university"
             value={data.university}
             onChange={handleChange}
@@ -380,7 +380,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="faculty"
             value={data.faculty}
             onChange={handleChange}
@@ -399,7 +399,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="department"
             value={data.department}
             onChange={handleChange}
@@ -416,7 +416,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="course"
             value={data.course}
             onChange={handleChange}
@@ -433,7 +433,7 @@ const AuthorSignupForm = () => {
         </label>
         <div className="relative">
           <input
-            type="password"
+            type="text"
             name="groupNumber"
             value={data.groupNumber}
             onChange={handleChange}

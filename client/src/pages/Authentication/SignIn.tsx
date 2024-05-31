@@ -137,9 +137,13 @@ const SignIn: React.FC = () => {
                 <div className="mb-5">
                   <input
                     type="submit"
-                    value="Sign In"
+                    value={isLoading ? 'Loading' : "Sign In"}
                     onClick={handleSubmit}
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    className={`w-full  rounded-lg border border-primary  p-4 text-white transition ${
+                      isLoading
+                        ? ' bg-slate-500'
+                        : 'bg-primary cursor-pointer hover:bg-opacity-90'
+                    }`}
                   />
                 </div>
 

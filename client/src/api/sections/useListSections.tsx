@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import useAxios from "../auth/useAxios";
+import useAxios from "../../hooks/useAxios";
 
 const useLisrSections = () => {
   const axios = useAxios();

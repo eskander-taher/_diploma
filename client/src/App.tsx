@@ -25,6 +25,8 @@ import NewsAdd from './pages/News/NewsAdd';
 import AddSubmissions from './pages/Submissions/AddSubmissions';
 import SignUpModerator from './pages/Authentication/SignUpModerator';
 import SignUpAuthor from './pages/Authentication/SignUpAuthor';
+import Events from './pages/Events/Events';
+import Event from './pages/Events/Event';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,6 +64,24 @@ function App() {
           }
         />
         <Route
+          path="/events"
+          element={
+            <>
+              <PageTitle title="Events | SMU" />
+              <Events />
+            </>
+          }
+        />
+        <Route
+          path="/events/:eventId"
+          element={
+            <>
+              <PageTitle title="Events | SMU" />
+              <Event />
+            </>
+          }
+        />
+        <Route
           path="/events/event-list"
           element={
             <>
@@ -81,6 +101,15 @@ function App() {
         />
         <Route
           path="/submissions/add-submission"
+          element={
+            <>
+              <PageTitle title="submission list| SMU" />
+              <AddSubmissions />
+            </>
+          }
+        />
+        <Route
+          path="/events/:eventId/submissions"
           element={
             <>
               <PageTitle title="submission list| SMU" />

@@ -7,13 +7,15 @@ const useCreateEvent = () => {
   const quiryClient = useQueryClient();
 
   const createEventRequest = (data) => {
+    console.log(data);
     return axios({
       url: `api/events/`,
       method: 'POST',
       data: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      // headers: {
+      //   'Content-Type': 'multipart/form-data',
+      // },
+      
     });
   };
 

@@ -3,6 +3,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import RichEditor from '../../components/RichEditor';
 import useCreateEvent from '../../api/events/useCreateEvent';
+import useAuth from '../../hooks/useAuth';
 
 interface Section {
   sectionOrder: string;
@@ -10,7 +11,7 @@ interface Section {
 }
 
 const AddEvent = () => {
-  const [adminId, setAdminId] = useState<number>(1);
+  const { user } = useAuth();
   const [eventName, setEventName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [sections, setSections] = useState<Section[]>([
@@ -18,6 +19,8 @@ const AddEvent = () => {
   ]);
   const { mutate, isLoading, error } = useCreateEvent();
 
+
+  console.log(error);
   const handleSectionChange = (index: number, field: string, value: string) => {
     const newSections = sections.map((section, i) =>
       i === index ? { ...section, [field]: value } : section,
@@ -39,21 +42,23 @@ const AddEvent = () => {
     const payload = {
       name: eventName,
       description,
-      adminId,
+      adminId: user.userId,
       sections: sections.map((section) => ({
         sectionOrder: parseFloat(section.sectionOrder), // Ensure sectionOrder is stored as a float
         sectionName: section.sectionName,
       })),
     };
 
-    mutate(JSON.stringify(payload),{
-      onSuccess:()=>{
+    // console.log(payload)
+
+    mutate(payload, {
+      onSuccess: () => {
         //  console.log('Event created successfully:', data);
-         // Reset the form
-         setEventName('');
-         setDescription('');
-         setSections([{ sectionOrder: '', sectionName: '' }]);
-      }
+        // Reset the form
+        setEventName('');
+        setDescription('');
+        setSections([{ sectionOrder: '', sectionName: '' }]);
+      },
     });
 
     // try {
