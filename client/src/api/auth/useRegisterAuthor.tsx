@@ -6,7 +6,7 @@ const useRegisterAuthor = () => {
   const axios = useAxios();
   const registerRequest = (data:any) => {
     return axios({
-      url: `api/regoster/author`,
+      url: `api/register/author`,
       data: data,
       method: 'POST',
     });

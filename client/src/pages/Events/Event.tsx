@@ -11,7 +11,7 @@ const Event = () => {
     <DefaultLayout>
       event
       <Link
-        to={`/events/${eventId}/submissions`}
+        to={`/events/${eventId}/add-submission`}
         className="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
       >
         create submission

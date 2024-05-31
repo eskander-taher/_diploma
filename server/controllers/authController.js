@@ -160,7 +160,7 @@ exports.verifyByEmail = async (req, res) => {
 			{ verifiedByEmail: true },
 			{ new: true }
 		);
-		res.render("emailVerified", { name: verifiedUser.firstName, email: verifiedUser.email });
+		res.render("emailVerified", { name: verifiedUser.username, email: verifiedUser.email });
 	} catch (error) {
 		console.log(error);
 		res.json({
@@ -249,19 +249,12 @@ exports.loginUser = async (req, res) => {
 			});
 		}
 
-		if (!existingUser.verifiedByEmail) {
-			return res.status(401).json({
-				success: false,
-				error: "Email not verified",
-			});
-		}
-
 		// Generate JWT token
 		const token = jwt.sign(
 			{
 				userId: existingUser._id,
 				role: existingUser.role,
-				firstName: existingUser.firstName,
+				username: existingUser.username,
 			},
 			process.env.SECRET,
 			{
