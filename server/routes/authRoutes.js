@@ -25,6 +25,8 @@ router.put("/change-role/:userId", authController.changeUserRole);
 
 // Get all users route
 router.get("/users", authController.getAllUsers);
+router.get("/users/mods", authController.getAllMods);
+router.get("/users/authors", authController.getAllMods);
 
 // Delete all users route
 router.delete("/users", authController.deleteAllUsers);

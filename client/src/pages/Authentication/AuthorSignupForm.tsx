@@ -74,6 +74,7 @@ const AuthorSignupForm = () => {
       },
     });
   };
+  
   return (
     <form>
       <div className="mb-4">
