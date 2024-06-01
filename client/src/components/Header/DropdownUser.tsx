@@ -47,7 +47,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user.username}
+            {user.firstName}
           </span>
           <span className="block text-xs">{user.faculty}</span>
         </span>

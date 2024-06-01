@@ -19,13 +19,13 @@ const UnauthNavbar = () => {
               to="/auth/signup/mod"
               className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
             >
-              be a moderator
+              Be a Moderator
             </Link>
             <Link
               to="/auth/signup/author"
               className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
             >
-              be an author
+              Be an Author
             </Link>
             <Link
               to="/auth/signin"
