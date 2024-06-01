@@ -1,12 +1,12 @@
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
+
 import useCreateSubmissions from '../../api/submissions/useCreateSubmissions';
 import { useParams } from 'react-router-dom';
-import useLisrSections from '../../api/sections/useListSections';
+
 import { useGetEvent } from '../../api/events/useGetEvent';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdKeyboardArrowDown } from 'react-icons/md';
 import useAuth from '../../hooks/useAuth';
 
 const formFields = {
@@ -41,13 +41,7 @@ const AddSubmissions = () => {
 
   const { data: event, isLoading: isEventLoading } = useGetEvent(eventId);
 
-  // const {
-  //   data: sections,
-  //   isLoading: isSectionsLoading,
-  //   error: sectionError,
-  // } = useLisrSections();
-
-  const { mutate, isLoading, error } = useCreateSubmissions();
+  const { mutate, isLoading } = useCreateSubmissions();
 
   const changeTextColor = () => {
     setIsOptionSelected(true);
@@ -93,7 +87,7 @@ const AddSubmissions = () => {
         console.log(data);
         setAlert({
           type: 'success',
-          message: "Your work is submited successfully",
+          message: 'Your work is submited successfully',
           active: true,
         });
       },
@@ -118,6 +112,59 @@ const AddSubmissions = () => {
           </h3>
         </div>
         <form className="pt-3 pb-3 pl-5 pr-5">
+          <div className="mb-4">
+            <label className="mb-2.5 block font-medium text-black dark:text-white">
+              Select Section
+            </label>
+
+            <div className="relative z-20 bg-white dark:bg-form-input">
+              <select
+                value={data.section}
+                placeholder="Select Section"
+                name="section"
+                onChange={(e) => {
+                  handleChange(e);
+                  changeTextColor();
+                }}
+                className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
+                  isOptionSelected ? 'text-black dark:text-white' : ''
+                }`}
+              >
+                {isEventLoading ? (
+                  <option
+                    value=""
+                    disabled
+                    className="text-body dark:text-bodydark"
+                  >
+                    loading
+                  </option>
+                ) : (
+                  <>
+                    <option
+                      value=""
+                      disabled
+                      className="text-body dark:text-bodydark"
+                    >
+                      Select Section
+                    </option>
+                    {event?.data?.sections.map((section: any) => {
+                      return (
+                        <option
+                          value={section._id}
+                          className="text-body dark:text-bodydark"
+                        >
+                          {section.order} {section.name}
+                        </option>
+                      );
+                    })}
+                  </>
+                )}
+              </select>
+              <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
+                <MdKeyboardArrowDown />
+              </span>
+            </div>
+          </div>
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
               Work name
@@ -163,86 +210,15 @@ const AddSubmissions = () => {
               />
             </div>
           </div>
-          <div className="mb-4">
-            <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Select Section
-            </label>
-
-            <div className="relative z-20 bg-white dark:bg-form-input">
-              <select
-                value={data.section}
-                placeholder="Select Section"
-                name="section"
-                onChange={(e) => {
-                  handleChange(e);
-                  changeTextColor();
-                }}
-                className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${
-                  isOptionSelected ? 'text-black dark:text-white' : ''
-                }`}
-              >
-                {isEventLoading ? (
-                  <option
-                    value=""
-                    disabled
-                    className="text-body dark:text-bodydark"
-                  >
-                    loading
-                  </option>
-                ) : (
-                  <>
-                    <option
-                      value=""
-                      disabled
-                      className="text-body dark:text-bodydark"
-                    >
-                      Select Section
-                    </option>
-                    {event?.data?.sections.map((section: any) => {
-                      return (
-                        <option
-                          value={section._id}
-                          className="text-body dark:text-bodydark"
-                        >
-                          {section.name}
-                        </option>
-                      );
-                    })}
-                  </>
-                )}
-                <option value="UK" className="text-body dark:text-bodydark">
-                  UK
-                </option>
-              </select>
-              <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g opacity="0.8">
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                      fill="#637381"
-                    ></path>
-                  </g>
-                </svg>
-              </span>
-            </div>
-          </div>
 
           {data.coauthors.map((coauthor, index) => (
             <div
               key={index}
-              className="mb-4.5 flex flex-col gap-6 xl:flex-row align-middle "
+              className="mb-4.5 flex flex-col gap-6 xl:flex-row align-middle bord"
             >
               <div className="w-full xl:w-1/3">
                 <label className="mb-2.5 block text-black dark:text-white">
-                  Full name
+                  Co-author Full name
                 </label>
                 <input
                   type="text"
@@ -256,7 +232,7 @@ const AddSubmissions = () => {
               </div>
               <div className="w-full xl:w-1/3">
                 <label className="mb-2.5 block text-black dark:text-white">
-                  University
+                  Co-author University
                 </label>
                 <input
                   type="text"
@@ -283,12 +259,12 @@ const AddSubmissions = () => {
             onClick={addCoauthor}
             className="mb-4 flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
           >
-            Add Coauthors
+            Add New Co-author
           </button>
 
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
-              Attach file
+              Attach File
             </label>
             <input
               type="file"
@@ -299,7 +275,7 @@ const AddSubmissions = () => {
           </div>
           <div className="mb-4">
             <label className="mb-2.5 block font-medium text-black dark:text-white">
-              <p className="mb-2.5">Publication</p>
+              <p className="mb-2.5">With Publication</p>
               {/* </label> */}
               <div className="relative">
                 <input

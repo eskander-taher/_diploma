@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import useAxios from '../../hooks/useAxios';
 
-const useLisrEvents = () => {
+const useEventList = () => {
   const axios = useAxios();
 
   const LisrEventsRequest = () => {
@@ -10,12 +10,9 @@ const useLisrEvents = () => {
     });
   };
 
-  const request = useQuery(
-    ["events"],
-    LisrEventsRequest
-  );
+  const request = useQuery(['events'], LisrEventsRequest);
 
   return request;
 };
 
-export default useLisrEvents;
+export default useEventList;
