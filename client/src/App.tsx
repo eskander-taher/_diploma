@@ -27,6 +27,8 @@ import SignUpModerator from './pages/Authentication/SignUpModerator';
 import SignUpAuthor from './pages/Authentication/SignUpAuthor';
 import Events from './pages/Events/Events';
 import Event from './pages/Events/Event';
+import GradeSubmissions from './pages/Submissions/GradeSubmissions';
+import NewsDetail from './pages/News/NewsDetail';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -109,6 +111,15 @@ function App() {
           }
         />
         <Route
+          path="/submissions/:subId/grade"
+          element={
+            <>
+              <PageTitle title="submission grade| SMU" />
+              <GradeSubmissions />
+            </>
+          }
+        />
+        <Route
           path="/events/:eventId/add-submission"
           element={
             <>
@@ -145,6 +156,15 @@ function App() {
           }
         />
         <Route
+          path="/news/:id"
+          element={
+            <>
+              <PageTitle title="news | SMU" />
+              <NewsDetail />
+            </>
+          }
+        />
+        <Route
           path="/calendar"
           element={
             <>
@@ -153,7 +173,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/profile"
           element={

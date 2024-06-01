@@ -11,9 +11,7 @@ const useCreateNews= () => {
       url: `api/news/`,
       method: "POST",
       data: data,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+     
     });
   };
 

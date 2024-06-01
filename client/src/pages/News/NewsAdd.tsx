@@ -3,11 +3,14 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import RichEditor from '../../components/RichEditor';
 import useCreateNews from '../../api/news/useCreateNews';
+import useAuth from '../../hooks/useAuth';
 
 const NewsAdd = () => {
+  const { user } = useAuth();
   const [data, setData] = useState({
     title: '',
-    text: '',
+    content: '',
+    createdBy: user.userId,
   });
 
   const { mutate, error, isLoading } = useCreateNews();
@@ -18,12 +21,13 @@ const NewsAdd = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(data)
+    console.log(data);
     mutate(data, {
       onSuccess: () => {
         setData({
           title: '',
-          text: '',
+          content: '',
+          createdBy: user.userId,
         });
       },
     });
@@ -56,11 +60,11 @@ const NewsAdd = () => {
 
             <div className="mb-6">
               <label className="mb-2.5 block text-black dark:text-white">
-                text
+                content
               </label>
               <RichEditor
-                description={data.text}
-                setDescription={(text: any) => setData({ ...data, text })}
+                description={data.content}
+                setDescription={(content: any) => setData({ ...data, content })}
               />
             </div>
             <button

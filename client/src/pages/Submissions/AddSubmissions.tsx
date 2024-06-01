@@ -14,7 +14,6 @@ const formFields = {
   event: '',
   section: '',
   file: null,
-  email: '',
   supervisorName: '',
   supervisorAcademicDegree: '',
   withPublication: false,
@@ -27,14 +26,16 @@ const AddSubmissions = () => {
   const [data, setData] = useState({
     ...formFields,
     event: eventId,
-    author: user._id,
+    author: user.userId,
   });
-  
+
   const [alert, setAlert] = useState({
     type: '',
     message: '',
     active: false,
   });
+
+  console.log(user);
 
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
@@ -92,7 +93,7 @@ const AddSubmissions = () => {
         console.log(data);
         setAlert({
           type: 'success',
-          message: data.data.message,
+          message: "Your work is submited successfully",
           active: true,
         });
       },
@@ -200,7 +201,7 @@ const AddSubmissions = () => {
                     {event?.data?.sections.map((section: any) => {
                       return (
                         <option
-                          value={section.id}
+                          value={section._id}
                           className="text-body dark:text-bodydark"
                         >
                           {section.name}

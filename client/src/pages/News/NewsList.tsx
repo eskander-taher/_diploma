@@ -2,9 +2,17 @@ import React from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useListNews from '../../api/news/useListNews';
+import { Link } from 'react-router-dom';
+import useDeleteNews from '../../api/news/useDeleteNews';
 
 const NewsList = () => {
   const { data: news, isLoading, error, isSuccess } = useListNews();
+
+  const { mutate, isLoading:isDeleting } = useDeleteNews();
+
+  const handleDelete = (id) => {
+    mutate(id);
+  };
 
   return (
     <DefaultLayout>
@@ -24,7 +32,7 @@ const NewsList = () => {
             </thead>
             <tbody>
               {isSuccess ? (
-                news.map((item: any) => (
+                news.data.map((item: any) => (
                   <tr key={item.id}>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
@@ -34,9 +42,20 @@ const NewsList = () => {
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
                         {/* Add your action buttons here */}
-                        <button className="hover:text-primary">Action 1</button>
-                        <button className="hover:text-primary">Action 2</button>
-                        <button className="hover:text-primary">Action 3</button>
+                      
+                        <Link
+                          to={`/news/${item._id}`}
+                          className="hover:bg-blue-600 transition-colors text-white  bg-primary py-2 px-4 rounded-lg"
+                        >
+                          Show
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(item._id)}
+                          className="hover:bg-red-600 transition-colors text-white  bg-red-500 py-2 px-4 rounded-lg"
+                        >
+                          Remove
+                        </button>
+                        {/* <button className="hover:text-primary">Action 3</button> */}
                       </div>
                     </td>
                   </tr>

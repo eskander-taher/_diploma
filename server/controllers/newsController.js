@@ -10,6 +10,7 @@ const newsSchema = z.object({
 
 // Create a news item
 const createNews = async (req, res) => {
+	console.log(req.body);
 	try {
 		const validatedData = newsSchema.parse(req.body);
 		const news = new News(validatedData);

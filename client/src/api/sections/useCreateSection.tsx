@@ -11,9 +11,7 @@ const useCreateSection = () => {
       url: `api/sections/`,
       method: "POST",
       data: data,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+     
     });
   };
 
