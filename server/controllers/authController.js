@@ -89,18 +89,20 @@ exports.registerUser = async (req, res) => {
 exports.registerAuthor = async (req, res) => {
 	try {
 		// Validating author input
-		const author = null;
+		let author = null;
+
 		try {
 			author = authorRegistrationSchema.parse({
 				...req.body,
 				course: parseInt(req.body.course),
 			});
 		} catch (error) {
-			res.status(401).json({ success: false, error, message: "Bad request" });
+			console.log(error)
+			return res.status(401).json({ success: false, error, message: "Bad request" });
 		}
 
 		// Storing author input in db
-		const createdAuthor = null;
+		let createdAuthor = null;
 		try {
 			const salt = await bcrypt.genSalt(SALT_ROUNDS);
 			const hashedPassword = await bcrypt.hash(author.password, salt);
@@ -111,7 +113,7 @@ exports.registerAuthor = async (req, res) => {
 			});
 			await createdAuthor.save();
 		} catch (error) {
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				error,
 				message: "Could not store the data in db",
@@ -127,14 +129,14 @@ exports.registerAuthor = async (req, res) => {
 			});
 		} catch (err) {
 			console.error("Error sending email:", err);
-			res.status(500).json({
+			return res.status(500).json({
 				success: false,
 				error: "Failed to send verification email.",
 			});
 		}
 	} catch (error) {
 		console.error("Author registration error:", error);
-		res.status(500).json({ success: false, error });
+		return res.status(500).json({ success: false, error });
 	}
 };
 
@@ -350,6 +352,7 @@ exports.getAllMods = async (req, res) => {
 		res.json({ success: false, error });
 	}
 };
+
 exports.getAllAuthors = async (req, res) => {
 	try {
 		const users = await User.find({ role: "author" });

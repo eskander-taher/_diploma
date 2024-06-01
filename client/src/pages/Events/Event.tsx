@@ -1,15 +1,13 @@
-import React from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { Link, useParams } from 'react-router-dom';
 import { useGetEvent } from '../../api/events/useGetEvent';
-import { useQuery } from 'react-query';
+import useAuth from '../../hooks/useAuth';
+
 const Event = () => {
   const { eventId } = useParams();
+  const { data, isLoading } = useGetEvent(eventId);
+  const { user } = useAuth();
 
-  const { data, isLoading, error, status } = useGetEvent(eventId);
-
-  console.log(status);
-  console.log(data);
   return (
     <DefaultLayout>
       <div className="flex flex-col gap-3">
@@ -22,10 +20,12 @@ const Event = () => {
                 {data.data.name}
               </h1>
               <div className="ql-editor">
-                <div dangerouslySetInnerHTML={{__html:data.data.description}} />
+                <div
+                  dangerouslySetInnerHTML={{ __html: data.data.description }}
+                />
               </div>
             </div>
-            {data.data.status !== 'going' ? (
+            {data.data.status !== 'going' || !user || user.role !== 'author' ? (
               <div className="inline-flex items-center justify-center rounded-md bg-graydark py-4 px-10 text-center font-medium text-white text-xl">
                 {data.data.status}
               </div>
@@ -34,7 +34,7 @@ const Event = () => {
                 to={`/events/${eventId}/add-submission`}
                 className="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
               >
-                create submission
+                Add Submission
               </Link>
             )}
           </>
