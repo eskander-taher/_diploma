@@ -10,8 +10,9 @@ const SignUpModerator: React.FC = () => {
   return (
     <DefaultLayout>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center">
-          <div className="hidden w-full xl:block xl:w-1/2">
+        <div className="flex flex-wrap">
+          
+          <div className="hidden w-full xl:block xl:w-1/2 ">
             <div className="py-17.5 px-26 text-center">
               <Link className="mb-5.5 inline-block" to="/">
                 {/* <img className="hidden dark:block" src={Logo} alt="Logo" />
