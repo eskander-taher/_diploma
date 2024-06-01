@@ -290,7 +290,8 @@ exports.loginUser = async (req, res) => {
 			{
 				userId: existingUser._id,
 				role: existingUser.role,
-				username: existingUser.username,
+				firstName: existingUser.firstName,
+				lastName: existingUser.lastName,
 			},
 			process.env.SECRET,
 			{
