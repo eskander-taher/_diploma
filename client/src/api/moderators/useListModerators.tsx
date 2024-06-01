@@ -11,7 +11,7 @@ const useListModerators = () => {
     });
   };
 
-  const request = useQuery(['users'], ListModsRequest);
+  const request = useQuery(['mods'], ListModsRequest);
 
   return request;
 }

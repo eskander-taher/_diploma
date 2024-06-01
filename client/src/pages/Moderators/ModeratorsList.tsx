@@ -1,13 +1,14 @@
-import React from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useListModerators from '../../api/moderators/useListModerators';
 import useDeleteModerator from '../../api/moderators/useDeleteModerator';
-import { Link } from 'react-router-dom';
 import useVeriftyModerator from '../../api/moderators/useVeriftyModerator';
 
+import { useQueryClient } from 'react-query';
+
 const ModeratorsList = () => {
-  const { data: mods, isLoading, error, isSuccess } = useListModerators();
+  const queryClient = useQueryClient()
+  const { data: mods, isSuccess } = useListModerators();
 
   const { mutate: deleteMod, isLoading: isDeleting } = useDeleteModerator();
 
@@ -19,9 +20,8 @@ const ModeratorsList = () => {
 
   const handleVerify = (id) => {
     verifyMod(id);
+    queryClient.invalidateQueries({ queryKey: ["mods"] })
   };
-
- 
 
   return (
     <DefaultLayout>
@@ -82,13 +82,14 @@ const ModeratorsList = () => {
                         >
                           Remove
                         </button>
-                        <button
-                          onClick={() => handleVerify(item._id)}
-                          className="hover:bg-blue-600 transition-colors text-white  bg-blue-500 py-2 px-4 rounded-lg"
-                        >
-                          Verify
-                        </button>
-                        {/* <button className="hover:text-primary">Action 3</button> */}
+                        {!item.verifiedByAdmin && (
+                          <button
+                            onClick={() => handleVerify(item._id)}
+                            className="hover:bg-blue-600 transition-colors text-white  bg-blue-500 py-2 px-4 rounded-lg"
+                          >
+                            Verify
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

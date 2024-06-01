@@ -23,12 +23,21 @@ const authenticateToken = (requiredRole) => async (req, res, next) => {
       });
     }
 
-    if (!user.verified) {
-      return res.status(403).json({
-        success: false,
-        error: "User email not verified. Please verify your email.",
-      });
-    }
+    if (!user.verifiedByEmail) {
+		return res.status(403).json({
+			success: false,
+			error: "User email not verified. Please verify your email.",
+		});
+	}
+
+	if (user.role === "mod") {
+		if (!user.verifiedByAdmin) {
+			return res.status(403).json({
+				success: false,
+				error: "Mod  not verified by admin.",
+			});
+		}
+	}
 
     if (user.role !== requiredRole) {
       return res.status(403).json({

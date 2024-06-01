@@ -21,6 +21,9 @@ router.put("/verify-mod/:id", authController.verifyByAdmin);
 router.get("/verify-email", authController.verifyByEmail);
 
 // Change user role route
+router.put("/verify-mod/:userId", authController.verifyMod);
+
+// Change user role route
 router.put("/change-role/:userId", authController.changeUserRole);
 
 // Get all users route

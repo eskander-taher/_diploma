@@ -252,23 +252,45 @@ exports.changeUserRole = async (req, res) => {
 	}
 };
 
+exports.verifyMod = async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		const updatedUser = await User.findByIdAndUpdate(
+			userId,
+			{ verifiedByAdmin: true },
+			{ new: true }
+		);
+
+		res.json({
+			success: true,
+			data: updatedUser,
+		});
+	} catch (error) {
+		console.error("Error verfying mod ", error);
+		res.status(500).json({
+			success: false,
+			error: "Internal server error.",
+		});
+	}
+};
+
 exports.loginUser = async (req, res) => {
 	try {
 		// Validating user input
 		const { email, password } = req.body;
 
-		const userLoginSchema = z.object({
-			email: z.string().email(),
-			password: z.string().min(3, "Password must contain at least 3 characters"),
-		});
+		if (email.trim() === "" || password.trim() === "") {
+			return res.status(404).json({
+				success: false,
+				error: "All fields are requried.",
+			});
+		}
 
-		const userInput = userLoginSchema.parse({
-			email,
-			password,
-		});
+		const user = req.body;
 
 		// Check if the user exists in the database
-		const existingUser = await User.findOne({ email: userInput.email });
+		const existingUser = await User.findOne({ email: user.email });
 
 		if (!existingUser) {
 			return res.status(404).json({
@@ -277,8 +299,24 @@ exports.loginUser = async (req, res) => {
 			});
 		}
 
+		if (!existingUser.verifiedByEmail) {
+			return res.status(404).json({
+				success: false,
+				error: "Email not verified",
+			});
+		}
+
+		if (existingUser.role === "mod") {
+			if (!existingUser.verifiedByAdmin) {
+				return res.status(404).json({
+					success: false,
+					error: "Moderator not verified by admin",
+				});
+			}
+		}
+
 		// Compare the provided password with the hashed password stored in the database
-		const passwordMatch = await bcrypt.compare(userInput.password, existingUser.password);
+		const passwordMatch = await bcrypt.compare(user.password, existingUser.password);
 
 		if (!passwordMatch) {
 			return res.status(401).json({
@@ -327,6 +365,7 @@ exports.getAllUsers = async (req, res) => {
 		res.json({ success: false, error });
 	}
 };
+
 exports.getAllUsers = async (req, res) => {
 	try {
 		const users = await User.find();
