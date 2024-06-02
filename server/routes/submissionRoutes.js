@@ -49,5 +49,7 @@ router.get("/submissions/grouped/sections", submissionController.getAllSubmissio
 
 // get winners of an event
 router.get("/submissions/results/:eventId", submissionController.getResultsByEvent);
+// get winners of an event
+router.get("/submissions/download/:filename", submissionController.downloadSubmissionFile);
 
 module.exports = router;

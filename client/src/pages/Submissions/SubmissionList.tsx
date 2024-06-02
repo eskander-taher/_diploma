@@ -2,34 +2,11 @@ import { Link } from 'react-router-dom';
 import useListSubmissions from '../../api/submissions/useListSubmissions';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useDownloadWorkFile } from '../../api/submissions/useDownloadWorkFile';
-import { useState } from 'react';
+import { baseURL } from '../../context/AxiosProvider';
+
 function SubmissionList() {
-  const [downloadEnabled, setDownloadEnabled] = useState<Boolean>(false);
-  const [fileToDownload, setFileToDownlaod] = useState<String>('');
-  const { data, isLoading, error, isSuccess } = useListSubmissions();
+  const { data, isSuccess } = useListSubmissions();
 
-  const {
-    isLoading: isDownloading,
-    isError,
-    refetch,
-  } = useDownloadWorkFile({
-    fileName: fileToDownload,
-    options: {
-      enabled: downloadEnabled,
-      refetchOnWindowFocus: false,
-    },
-  });
-
-  const handleDownload = (fileName: String) => {
-    if (!downloadEnabled) {
-      refetch();
-    } else {
-      setFileToDownlaod(fileName);
-      setDownloadEnabled(true);
-    }
-  };
-  console.log(data)
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Submissions" />
@@ -96,12 +73,12 @@ function SubmissionList() {
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     {/* Add your action buttons here */}
-                    <button
-                      onClick={() => handleDownload(item?.file)}
+                    <a
+                      href={`${baseURL}api/submissions/download/${item.file}`}
                       className="hover:bg-blue-600 transition-colors text-white  bg-blue-500 py-2 px-4 rounded-lg"
                     >
                       Download
-                    </button>
+                    </a>
                     <Link
                       to={`/submissions/${item._id}/grade`}
                       className="hover:bg-blue-600 transition-colors text-white  bg-primary py-2 px-4 rounded-lg"

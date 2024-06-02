@@ -1,41 +1,13 @@
 import { Link } from 'react-router-dom';
-
 import useListSubmissionsByMod from '../../api/submissions/useListSubmissionsByMod';
-import useGradeSubmissions from '../../api/submissions/useGradeSubmissions';
-
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useDownloadWorkFile } from '../../api/submissions/useDownloadWorkFile';
-import { useState } from 'react';
-
 import useAuth from '../../hooks/useAuth';
+import { baseURL } from '../../context/AxiosProvider';
+
 function ModSubmissionList() {
   const { user } = useAuth();
-
-  const [downloadEnabled, setDownloadEnabled] = useState<Boolean>(false);
-  const [fileToDownload, setFileToDownlaod] = useState<String>('');
-  const { data, isSuccess } = useListSubmissionsByMod(
-    user.userId,
-  );
-
-  const {
-    refetch,
-  } = useDownloadWorkFile({
-    fileName: fileToDownload,
-    options: {
-      enabled: downloadEnabled,
-      refetchOnWindowFocus: false,
-    },
-  });
-
-  const handleDownload = (fileName: String) => {
-    if (!downloadEnabled) {
-      refetch();
-    } else {
-      setFileToDownlaod(fileName);
-      setDownloadEnabled(true);
-    }
-  };
+  const { data, isSuccess } = useListSubmissionsByMod(user.userId);
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Mod Submissions" />
@@ -64,8 +36,8 @@ function ModSubmissionList() {
         </thead>
         <tbody>
           {isSuccess ? (
-            data.data.map((item: any) => (
-              <tr key={item.id}>
+            data?.data?.map((item: any) => (
+              <tr key={item._id}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {item.workName}
@@ -94,19 +66,18 @@ function ModSubmissionList() {
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     {/* Add your action buttons here */}
-                    <button
-                      onClick={() => handleDownload(item?.file)}
+                    <a
+                      href={`${baseURL}api/submissions/download/${item.file}`}
                       className="hover:bg-blue-600 transition-colors text-white  bg-blue-500 py-2 px-4 rounded-lg"
                     >
                       Download
-                    </button>
+                    </a>
                     <Link
                       to={`/submissions/${item._id}/grade`}
                       className="hover:bg-blue-600 transition-colors text-white  bg-primary py-2 px-4 rounded-lg"
                     >
                       grade
                     </Link>
-                    {/* <button className="hover:text-primary">Action 3</button> */}
                   </div>
                 </td>
               </tr>

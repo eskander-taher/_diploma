@@ -463,3 +463,10 @@ exports.getResultsByEvent = async (req, res) => {
     }
 };
 
+exports.downloadSubmissionFile = async (req, res) => {
+	const filename = req.params.filename;
+	const filepath = path.join(__dirname, "..", "uploads", filename);
+	console.log(filepath);
+	res.download(filepath);
+};
+

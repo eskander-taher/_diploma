@@ -15,13 +15,13 @@ connectDB(process.env.MONGO_DATABASE_URL)
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
     
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use("/uploads", authMiddleware, express.static("uploads"));
-app.use(express.static("uploads"));
 
 const logger = require("./middleware/logger");
 app.use(logger);

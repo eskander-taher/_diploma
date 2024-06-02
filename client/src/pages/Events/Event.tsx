@@ -26,7 +26,7 @@ const Event = () => {
                 />
               </div>
             </div>
-            {data.data.status !== 'ongoing' ||
+            {data?.data?.status !== 'ongoing' ||
             !user ||
             user.role !== 'author' ? (
               <div className="inline-flex items-center justify-center rounded-md bg-graydark py-4 px-10 text-center font-medium text-white text-xl">

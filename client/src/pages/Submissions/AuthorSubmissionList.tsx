@@ -1,40 +1,12 @@
-
 import useListSubmissionsByAuthor from '../../api/submissions/useListSubmissionsByAuthor';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useDownloadWorkFile } from '../../api/submissions/useDownloadWorkFile';
-import { useState } from 'react';
-
 import useAuth from '../../hooks/useAuth';
 
 function AuthorSubmissionList() {
+  const { user } = useAuth();
+  const { data, isSuccess } = useListSubmissionsByAuthor(user.userId);
 
-  const {user} = useAuth()
-  
-  const [downloadEnabled, setDownloadEnabled] = useState<Boolean>(false);
-  const [fileToDownload, setFileToDownlaod] = useState<String>('');
-  const { data, isLoading, error, isSuccess } = useListSubmissionsByAuthor(user.userId);
-
-  const {
-    isLoading: isDownloading,
-    isError,
-    refetch,
-  } = useDownloadWorkFile({
-    fileName: fileToDownload,
-    options: {
-      enabled: downloadEnabled,
-      refetchOnWindowFocus: false,
-    },
-  });
-
-  const handleDownload = (fileName: String) => {
-    if (!downloadEnabled) {
-      refetch();
-    } else {
-      setFileToDownlaod(fileName);
-      setDownloadEnabled(true);
-    }
-  };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Author Submissions" />

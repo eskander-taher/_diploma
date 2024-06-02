@@ -1,8 +1,6 @@
 import { createContext, useMemo } from "react";
 import Axios from "axios";
-import useAuth from "../hooks/useAuth";
-// import dayjs from "dayjs";
-// import jwt_decode from "jwt-decode";
+import useAuth from '../hooks/useAuth';
 
 export const axiosContext = createContext({});
 
@@ -26,25 +24,6 @@ const AxiosProvider = ({ children }) => {
       return config;
     });
 
-    // axios.interceptors.request.use(async (req) => {
-
-    //   if (!authState?.access) return req;
-
-    //   const user = jwt_decode(authState?.access);
-    //   const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
-
-    //   if (!isExpired) return req;
-
-    //   const response = await axios.post(`${baseURL}/api/token/refresh/`, {
-    //     refresh: authState.refresh,
-    //   });
-
-    //   //   TODO refresh in auth
-
-    //   req.headers.Authorization = `Bearer ${response.data.access}`;
-
-    //   return req;
-    // });
     return axios;
   }, [authState]);
   return (
