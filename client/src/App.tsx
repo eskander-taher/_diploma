@@ -30,6 +30,10 @@ import Event from './pages/Events/Event';
 import GradeSubmissions from './pages/Submissions/GradeSubmissions';
 import NewsDetail from './pages/News/NewsDetail';
 
+import EditEvent from './pages/Events/EditEvent';
+import AuthorSubmissionList from './pages/Submissions/AuthorSubmissionList';
+import ModSubmissionList from './pages/Submissions/ModSubmissionList';
+
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -93,11 +97,38 @@ function App() {
           }
         />
         <Route
-          path="/submissions/submission-list"
+          path="/events/edit-event/:eventId"
+          element={
+            <>
+              <PageTitle title="Edit event | SMU" />
+              <EditEvent />
+            </>
+          }
+        />
+        <Route
+          path="/submission-list"
           element={
             <>
               <PageTitle title="submission list| SMU" />
               <SubmissionList />
+            </>
+          }
+        />
+        <Route
+          path="/author-submission-list"
+          element={
+            <>
+              <PageTitle title="submission list| SMU" />
+              <AuthorSubmissionList />
+            </>
+          }
+        />
+        <Route
+          path="/mod-submission-list"
+          element={
+            <>
+              <PageTitle title="submission list| SMU" />
+              <ModSubmissionList />
             </>
           }
         />

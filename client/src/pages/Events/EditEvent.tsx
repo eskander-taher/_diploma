@@ -1,10 +1,13 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import RichEditor from '../../components/RichEditor';
-import useCreateEvent from '../../api/events/useCreateEvent';
 import useAuth from '../../hooks/useAuth';
 import useListModerators from '../../api/moderators/useListModerators';
+
+import useGetEvent from '../../api/events/useGetEvent';
+import useUpdateEvent from '../../api/events/useUpdateEvent';
 
 interface Section {
   order: string;
@@ -18,7 +21,8 @@ interface EventData {
   sections: Section[];
 }
 
-const AddEvent = () => {
+const EditEvent = () => {
+  const { eventId } = useParams();
   const { user } = useAuth();
   const [eventData, setEventData] = useState<EventData>({
     name: '',
@@ -26,11 +30,24 @@ const AddEvent = () => {
     sections: [{ order: '', name: '', mod: '' }],
   });
 
-  const { mutate, isLoading } = useCreateEvent();
-  const {
-    data: mods,
-    isLoading: isModsLoading,
-  }: any = useListModerators();
+  const { mutate, isLoading } = useUpdateEvent();
+  const { data: event, isLoading: isEventLoading } = useGetEvent(eventId);
+  const { data: mods, isLoading: isModsLoading }: any = useListModerators();
+
+  useEffect(() => {
+    if (event && event.data) {
+      const fetchedEvent = event.data;
+      setEventData({
+        name: fetchedEvent.name,
+        description: fetchedEvent.description,
+        sections: fetchedEvent.sections.map((section: any) => ({
+          order: section.order.toString(),
+          name: section.name,
+          mod: section.mod._id,
+        })),
+      });
+    }
+  }, [event]);
 
   const handleEventChange = (field: string, value: string) => {
     setEventData((prev) => ({ ...prev, [field]: value }));
@@ -38,7 +55,7 @@ const AddEvent = () => {
 
   const handleSectionChange = (index: number, field: string, value: string) => {
     const newSections = eventData.sections.map((section, i) =>
-      i === index ? { ...section, [field]: value } : section
+      i === index ? { ...section, [field]: value } : section,
     );
     setEventData((prev) => ({ ...prev, sections: newSections }));
   };
@@ -57,7 +74,7 @@ const AddEvent = () => {
     }));
   };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const payload = {
@@ -65,26 +82,20 @@ const AddEvent = () => {
       description: eventData.description,
       createdBy: user.userId,
       sections: eventData.sections.map((section) => ({
-        order: parseFloat(section.order), // Ensure order is stored as a float
+        order: parseFloat(section.order),
         name: section.name,
         mod: section.mod,
       })),
     };
 
-    mutate(payload, {
-      onSuccess: () => {
-        setEventData({
-          name: '',
-          description: '',
-          sections: [{ order: '', name: '', mod: '' }],
-        });
-      },
-    });
+    console.log(payload);
+
+    mutate({ eventId, payload });
   };
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Add Event" />
+      <Breadcrumb pageName="Edit Event" />
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">Event Form</h3>
@@ -221,8 +232,8 @@ const AddEvent = () => {
               </label>
               <RichEditor
                 description={eventData.description}
-                setDescription={(value: string) =>
-                  handleEventChange('description', value)
+                setDescription={(desc: string) =>
+                  handleEventChange('description', desc)
                 }
               />
             </div>
@@ -247,4 +258,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default EditEvent;

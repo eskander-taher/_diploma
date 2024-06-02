@@ -23,10 +23,27 @@ router.put("/submissions/:id", submissionController.updateSubmissionById);
 // Get all submissions
 router.get("/submissions", submissionController.getAllSubmissions);
 
+// Get accepted sumission
+router.get("/submissions/accepted", submissionController.getAcceptedSubmissions);
+
 // Get a specific submission by ID
 router.get("/submissions/:id", submissionController.getSubmissionById);
 
 // Delete a submission by ID
 router.delete("/submissions/:id", submissionController.deleteSubmissionById);
+
+// Getting submissions by section
+router.get("/submissions/section/:sectionId", submissionController.getSubmissionsBySection);
+
+//  Getting submissions by author
+router.get("/submissions/author/:authorId", submissionController.getSubmissionsByAuthor);
+
+//  Getting submissions by mod
+router.get("/submissions/mod/:modId", submissionController.getSubmissionsByMod);
+
+// Grade sumission
+router.put("/submissions/grade/:id", submissionController.gradeSubmissionById);
+
+router.get("/submissions/grouped/sections", submissionController.getAllSubmissionsGroupedBySection);
 
 module.exports = router;

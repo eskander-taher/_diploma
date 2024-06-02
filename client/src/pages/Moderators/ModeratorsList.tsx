@@ -1,26 +1,28 @@
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useListModerators from '../../api/moderators/useListModerators';
-import useDeleteModerator from '../../api/moderators/useDeleteModerator';
 import useVeriftyModerator from '../../api/moderators/useVeriftyModerator';
+import useDeleteUser from '../../api/users/useDeleteUser';
 
 import { useQueryClient } from 'react-query';
 
 const ModeratorsList = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { data: mods, isSuccess } = useListModerators();
 
-  const { mutate: deleteMod, isLoading: isDeleting } = useDeleteModerator();
+  const { mutate: deleteMod } = useDeleteUser();
 
-  const { mutate: verifyMod, isLoading: isVerifying } = useVeriftyModerator();
+  const { mutate: verifyMod } = useVeriftyModerator();
 
   const handleDelete = (id) => {
     deleteMod(id);
+    queryClient.invalidateQueries({ queryKey: ['users'] });
+
   };
 
   const handleVerify = (id) => {
     verifyMod(id);
-    queryClient.invalidateQueries({ queryKey: ["mods"] })
+    queryClient.invalidateQueries({ queryKey: ['users'] });
   };
 
   return (

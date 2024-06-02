@@ -1,18 +1,21 @@
 import { useQuery } from "react-query";
 import useAxios from '../../hooks/useAxios';
 
-const useEventList = () => {
+const useListEvents = () => {
   const axios = useAxios();
 
-  const LisrEventsRequest = () => {
+  const ListEventsRequest = () => {
     return axios({
       url: `api/events/`,
     });
   };
 
-  const request = useQuery(['events'], LisrEventsRequest);
+  const request = useQuery(
+    ["events"],
+    ListEventsRequest,
+  );
 
   return request;
 };
 
-export default useEventList;
+export default useListEvents;

@@ -16,7 +16,7 @@ const useVeriftyModerator = () => {
   const request = useMutation({
     mutationFn: deleteModeratorsRequist,
     onSuccess: () => {
-      quiryClient.invalidateQueries({ queryKey: ['mods'] });
+      quiryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 

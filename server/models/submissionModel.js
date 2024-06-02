@@ -52,7 +52,7 @@ const submissionSchema = new Schema(
 		},
 		comments: [
 			{
-				moderator: {
+				mod: {
 					type: Schema.Types.ObjectId,
 					ref: "Mod",
 					required: true,

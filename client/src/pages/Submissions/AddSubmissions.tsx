@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useCreateSubmissions from '../../api/submissions/useCreateSubmissions';
 import { useParams } from 'react-router-dom';
 
-import { useGetEvent } from '../../api/events/useGetEvent';
+import useGetEvent from '../../api/events/useGetEvent';
 import { MdClose, MdKeyboardArrowDown } from 'react-icons/md';
 import useAuth from '../../hooks/useAuth';
 

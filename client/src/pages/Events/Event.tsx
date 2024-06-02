@@ -1,6 +1,6 @@
 import DefaultLayout from '../../layout/DefaultLayout';
 import { Link, useParams } from 'react-router-dom';
-import { useGetEvent } from '../../api/events/useGetEvent';
+import useGetEvent from '../../api/events/useGetEvent';
 import useAuth from '../../hooks/useAuth';
 
 const Event = () => {
@@ -25,7 +25,9 @@ const Event = () => {
                 />
               </div>
             </div>
-            {data.data.status !== 'going' || !user || user.role !== 'author' ? (
+            {data.data.status !== 'ongoing' ||
+            !user ||
+            user.role !== 'author' ? (
               <div className="inline-flex items-center justify-center rounded-md bg-graydark py-4 px-10 text-center font-medium text-white text-xl">
                 {data.data.status}
               </div>

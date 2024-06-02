@@ -1,24 +1,27 @@
-import { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 
-const EventList = () => {
-  const [events, setEvents] = useState<any[]>([]); // Use 'any' type temporarily
+import useListEvents from '../../api/events/useEventList';
+import useChangeEventStatus from '../../api/events/useChangeEventStatus';
 
-  useEffect(() => {
-    // Fetch data from server
-    fetch('http://localhost:5000/api/events')
-      .then(response => response.json())
-      .then(data => {
-        // Extract only the necessary data (event name and id) from the response
-        const eventData = data.map((event: any) => ({
-          id: event.id,
-          name: event.name
-        }));
-        setEvents(eventData);
-      })
-      .catch(error => console.error('Error fetching events:', error));
-  }, []);
+import { useQueryClient } from 'react-query';
+
+const EventList = () => {
+  const { data: events } = useListEvents();
+  const { mutate } = useChangeEventStatus();
+
+  const queryClient = useQueryClient();
+
+  const handleStatusChange = (eventId, newStatus) => {
+    // Handle the status change logic here, e.g., make an API call to update the status
+    console.log(`Event ID: ${eventId}, New Status: ${newStatus}`);
+    let params = `${eventId}/${newStatus}`;
+    mutate(params, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['events'] });
+      },
+    });
+  };
 
   return (
     <DefaultLayout>
@@ -37,8 +40,8 @@ const EventList = () => {
               </tr>
             </thead>
             <tbody>
-              {events.map(event => (
-                <tr key={event.id}>
+              {events?.data?.map((event) => (
+                <tr key={event._id}>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {event.name}
@@ -49,7 +52,18 @@ const EventList = () => {
                       {/* Add your action buttons here */}
                       <button className="hover:text-primary">Action 1</button>
                       <button className="hover:text-primary">Action 2</button>
-                      <button className="hover:text-primary">Action 3</button>
+                      <select
+                        value={event.status}
+                        onChange={(e) =>
+                          handleStatusChange(event._id, e.target.value)
+                        }
+                        className="hover:text-primary"
+                      >
+                        <option value="draft">draft</option>
+                        <option value="upcoming">upcoming</option>
+                        <option value="ongoing">ongoing</option>
+                        <option value="finished">finished</option>
+                      </select>
                     </div>
                   </td>
                 </tr>

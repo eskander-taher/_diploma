@@ -405,6 +405,19 @@ exports.getAllAuthors = async (req, res) => {
 	}
 };
 
+exports.deleteUser = async (req, res) => {
+	const { userId } = req.params;
+	try {
+		const result = await User.deleteOne({ _id: userId });
+
+		res.json({
+			success: true,
+			data: result,
+		});
+	} catch (error) {
+		res.json({ success: false, error });
+	}
+};
 exports.deleteAllUsers = async (req, res) => {
 	try {
 		const result = await User.deleteMany();

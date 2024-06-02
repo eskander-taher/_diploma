@@ -1,6 +1,5 @@
-import React from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
-import EventCard from '../../components/EventCard';
+import EventCard from './EventCard';
 import useEventList from '../../api/events/useEventList';
 
 const Events = () => {

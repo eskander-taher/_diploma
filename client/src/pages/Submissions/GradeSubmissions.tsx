@@ -12,6 +12,7 @@ const GradeSubmissions = () => {
     comment: '',
     subId,
   });
+  
   const [alert, setAlert] = useState({
     type: '',
     message: '',

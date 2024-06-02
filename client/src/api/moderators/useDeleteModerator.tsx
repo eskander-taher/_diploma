@@ -17,7 +17,7 @@ const useDeleteModerator = () => {
  const request = useMutation({
    mutationFn: deleteModeratorsRequist,
    onSuccess: () => {
-     quiryClient.invalidateQueries({ queryKey: ['moderators'] });
+     quiryClient.invalidateQueries({ queryKey: ['users'] });
    },
  });
 

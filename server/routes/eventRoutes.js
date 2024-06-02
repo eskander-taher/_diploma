@@ -13,6 +13,7 @@ router.get('/events', eventController.getAllEvents);
 
 // Get a single event by id
 router.get('/events/:id', eventController.getEventById);
+router.put('/events/:id/:status', eventController.updateEventStatus);
 
 
 // // Delete an event by id

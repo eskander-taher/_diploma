@@ -2,33 +2,6 @@ const mongoose = require("mongoose");
 const Submission = require("../models/submissionModel");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
-const { z } = require("zod");
-
-const coauthorSchema = z.object({
-	fullName: z.string().min(1),
-	university: z.string().min(1),
-});
-
-const commentSchema = z.object({
-	moderator: z.string(),
-	comment: z.string().min(1),
-});
-
-const submissionSchema = z.object({
-	workName: z.string().min(1),
-	withPublication: z.boolean().optional(),
-	supervisorName: z.string().min(1),
-	supervisorAcademicDegree: z.string().min(1),
-	author: z.string(),
-	coauthors: z.array(coauthorSchema).optional(),
-	event: z.string(),
-	section: z.string(),
-	comments: z.array(commentSchema).optional(),
-	file: z.string().min(1).optional(),
-	status: z.enum(["pendding", "accepted", "rejected"]).optional(),
-	grade: z.number().min(0).max(10).optional(),
-	grader: z.string(),
-});
 
 exports.createSubmission = async (req, res) => {
 	const data = req.body;
@@ -151,7 +124,7 @@ exports.getAllSubmissions = async (req, res) => {
 			.populate("section")
 			.populate({
 				path: "comments",
-				populate: { path: "moderator" },
+				populate: { path: "mod" },
 			})
 			.populate("grader")
 			.exec();
@@ -169,7 +142,7 @@ exports.getSubmissionById = async (req, res) => {
 			.populate("section")
 			.populate({
 				path: "comments",
-				populate: { path: "moderator" },
+				populate: { path: "mod" },
 			})
 			.populate("grader")
 			.exec();
@@ -181,6 +154,191 @@ exports.getSubmissionById = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
+
+exports.getSubmissionsBySection = async (req, res) => {
+	const sectionId = req.params.sectionId;
+
+	try {
+		const submissions = await Submission.find({ section: sectionId })
+			.populate("author")
+			.populate("event")
+			.populate("section")
+			.populate({
+				path: "comments",
+				populate: { path: "mod" },
+			})
+			.populate("grader")
+			.exec();
+
+		if (!submissions) {
+			return res.status(404).json({ error: "No submissions found for this section" });
+		}
+
+		res.status(200).json(submissions);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+exports.getSubmissionsByAuthor = async (req, res) => {
+	const authorId = req.params.authorId;
+
+	try {
+		const submissions = await Submission.find({ author: authorId })
+			.populate("author")
+			.populate("event")
+			.populate("section")
+			.populate({
+				path: "comments",
+				populate: { path: "mod" },
+			})
+			.populate("grader")
+			.exec();
+
+		if (!submissions || submissions.length === 0) {
+			return res.status(404).json({ error: "No submissions found for this author" });
+		}
+
+		res.status(200).json(submissions);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+exports.gradeSubmissionById = async (req, res) => {
+	const submissionId = req.params.id;
+	const { grade, status, comment, mod } = req.body;
+
+	const session = await mongoose.startSession();
+	session.startTransaction();
+
+	try {
+		const submission = await Submission.findById(submissionId).session(session);
+
+		console.log(submission);
+
+		if (!submission) {
+			await session.abortTransaction();
+			return res.status(404).json({ error: "Submission not found." });
+		}
+
+		// Update the grade and status
+		submission.grade = grade !== undefined ? parseInt(grade) : submission.grade;
+		submission.status = status || submission.status;
+		submission.grader = mod || submission.grader
+
+		// Add a new comment if provided
+		if (comment) {
+			submission.comments.push({
+				comment,
+				mod,
+			});
+		}
+
+		const savedSubmission = await submission.save({ session });
+
+		await session.commitTransaction();
+		res.status(200).json(savedSubmission);
+	} catch (error) {
+		await session.abortTransaction();
+		res.status(500).json({
+			error: "An error occurred while grading the submission.",
+			details: error.message,
+		});
+	} finally {
+		session.endSession();
+	}
+};
+
+exports.getAcceptedSubmissions = async (req, res) => {
+	try {
+		const submissions = await Submission.find({ status: "accepted" })
+			.populate("author")
+			.populate("event")
+			.populate("section")
+			.populate({
+				path: "comments",
+				populate: { path: "mod" },
+			})
+			.populate("grader")
+			.exec();
+
+		if (!submissions || submissions.length === 0) {
+			return res.status(404).json({ error: "No accepted submissions found" });
+		}
+
+		res.status(200).json(submissions);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+exports.getSubmissionsByMod = async (req, res) => {
+    const modId = req.params.modId;
+
+    try {
+        const submissions = await Submission.find({ "comments.mod": modId })
+            .populate("author")
+            .populate("event")
+            .populate("section")
+            .populate({
+                path: "comments",
+                populate: { path: "moderator" },
+            })
+            .populate("grader")
+            .exec();
+
+        if (!submissions || submissions.length === 0) {
+            return res.status(404).json({ error: "No submissions found for this moderator" });
+        }
+
+        res.status(200).json(submissions);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAllSubmissionsGroupedBySection = async (req, res) => {
+    try {
+        // Fetch all submissions
+        const submissions = await Submission.find()
+            .populate("author")
+            .populate("event")
+            .populate("section")
+            .populate({
+                path: "comments",
+                populate: { path: "moderator" },
+            })
+            .populate("grader")
+            .exec();
+
+        // Group submissions by section
+        const groupedBySection = submissions.reduce((acc, submission) => {
+            const section = submission.section;
+
+            // Find if the section already exists in the accumulator
+            const sectionGroup = acc.find(group => group.section._id.equals(section._id));
+
+            if (sectionGroup) {
+                // If the section group exists, add the submission to it
+                sectionGroup.submissions.push(submission);
+            } else {
+                // If the section group does not exist, create a new one
+                acc.push({
+                    section: section,
+                    submissions: [submission]
+                });
+            }
+
+            return acc;
+        }, []);
+
+        res.status(200).json(groupedBySection);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 
 exports.deleteSubmissionById = async (req, res) => {
 	const session = await mongoose.startSession();
