@@ -1,48 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import useGradeSubmissions from '../../api/submissions/useGradeSubmissions';
 import { MdClose } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
 
 const GradeSubmissions = () => {
-  const{subId}=useParams()
+  const { subId } = useParams();
+  const { user } = useAuth();
+
   const [data, setData] = useState({
-    grade: '',
-    status: '',
+    grade: '1',
+    status: 'rejected',
     comment: '',
-    subId,
+    mod: user.userId,
   });
-  
+
   const [alert, setAlert] = useState({
     type: '',
     message: '',
     active: false,
   });
 
-  const { mutate, isLoading, error } = useGradeSubmissions();
+  const { mutate, isLoading } = useGradeSubmissions();
 
   const handleChange = (e: any) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    mutate(data, {
-      onSuccess(data, variables, context) {
-        setAlert({
-          type: 'succes',
-          active: true,
-          message: 'submissions is graded successfully',
-        });
-        setData({ grade: '', status: '', comment: '' });
-      },
-      onError(error, variables, context) {
-        setAlert({
-          type: 'error',
-          active: true,
-          message: 'somethin went wrong',
-        });
-      },
-    });
+    mutate({ payload: data, subId });
   };
 
   return (

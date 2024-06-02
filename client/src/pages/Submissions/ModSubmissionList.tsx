@@ -1,18 +1,24 @@
 import { Link } from 'react-router-dom';
-import useLisrSections from '../../api/sections/useListSections';
-import useListSubmissions from '../../api/submissions/useListSubmissions';
+
+import useListSubmissionsByMod from '../../api/submissions/useListSubmissionsByMod';
+import useGradeSubmissions from '../../api/submissions/useGradeSubmissions';
+
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useDownloadWorkFile } from '../../api/submissions/useDownloadWorkFile';
 import { useState } from 'react';
+
+import useAuth from '../../hooks/useAuth';
 function ModSubmissionList() {
+  const { user } = useAuth();
+
   const [downloadEnabled, setDownloadEnabled] = useState<Boolean>(false);
   const [fileToDownload, setFileToDownlaod] = useState<String>('');
-  const { data, isLoading, error, isSuccess } = useListSubmissions();
+  const { data, isSuccess } = useListSubmissionsByMod(
+    user.userId,
+  );
 
   const {
-    isLoading: isDownloading,
-    isError,
     refetch,
   } = useDownloadWorkFile({
     fileName: fileToDownload,

@@ -207,15 +207,17 @@ exports.getSubmissionsByAuthor = async (req, res) => {
 
 exports.gradeSubmissionById = async (req, res) => {
 	const submissionId = req.params.id;
-	const { grade, status, comment, mod } = req.body;
+	let { grade, status, comment, mod } = req.body;
+
+	if (grade) {
+		grade = parseInt(grade);
+	}
 
 	const session = await mongoose.startSession();
 	session.startTransaction();
 
 	try {
 		const submission = await Submission.findById(submissionId).session(session);
-
-		console.log(submission);
 
 		if (!submission) {
 			await session.abortTransaction();
@@ -225,7 +227,7 @@ exports.gradeSubmissionById = async (req, res) => {
 		// Update the grade and status
 		submission.grade = grade !== undefined ? parseInt(grade) : submission.grade;
 		submission.status = status || submission.status;
-		submission.grader = mod || submission.grader
+		submission.grader = mod || submission.grader;
 
 		// Add a new comment if provided
 		if (comment) {
@@ -274,29 +276,40 @@ exports.getAcceptedSubmissions = async (req, res) => {
 };
 
 exports.getSubmissionsByMod = async (req, res) => {
-    const modId = req.params.modId;
+	const modId = req.params.modId;
 
-    try {
-        const submissions = await Submission.find({ "comments.mod": modId })
-            .populate("author")
-            .populate("event")
-            .populate("section")
-            .populate({
-                path: "comments",
-                populate: { path: "moderator" },
-            })
-            .populate("grader")
-            .exec();
+	try {
+		// Fetch sections where the mod matches the provided modId
+		const sections = await mongoose.model("Section").find({ mod: modId }).exec();
 
-        if (!submissions || submissions.length === 0) {
-            return res.status(404).json({ error: "No submissions found for this moderator" });
-        }
+		if (!sections || sections.length === 0) {
+			return res.status(404).json({ error: "No sections found for this moderator" });
+		}
 
-        res.status(200).json(submissions);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		const sectionIds = sections.map((section) => section._id);
+
+		// Find submissions for the fetched sections
+		const submissions = await Submission.find({ section: { $in: sectionIds } })
+			.populate("author")
+			.populate("event")
+			.populate("section")
+			.populate({
+				path: "comments",
+				populate: { path: "mod" },
+			})
+			.populate("grader")
+			.exec();
+
+		if (!submissions || submissions.length === 0) {
+			return res.status(404).json({ error: "No submissions found for this moderator" });
+		}
+
+		res.status(200).json(submissions);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 };
+
 
 exports.getAllSubmissionsGroupedBySection = async (req, res) => {
     try {
@@ -364,3 +377,89 @@ exports.deleteSubmissionById = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
+
+exports.getResultsByEvent = async (req, res) => {
+    const eventId = req.params.eventId;
+
+    try {
+        // Fetch all accepted submissions for the specified event
+        const submissions = await Submission.find({ status: "accepted", event: eventId })
+            .populate("author")
+            .populate("event")
+            .populate("section")
+            .populate({
+                path: "comments",
+                populate: { path: "mod" },
+            })
+            .populate("grader")
+            .exec();
+
+        // Group submissions by section
+        const groupedBySection = submissions.reduce((acc, submission) => {
+            const section = submission.section;
+
+            // Find if the section already exists in the accumulator
+            const sectionGroup = acc.find(group => group.section._id.equals(section._id));
+
+            if (sectionGroup) {
+                // If the section group exists, add the submission to it
+                sectionGroup.submissions.push(submission);
+            } else {
+                // If the section group does not exist, create a new one
+                acc.push({
+                    section: section,
+                    submissions: [submission]
+                });
+            }
+
+            return acc;
+        }, []);
+
+        // Determine winners for each section
+        const results = groupedBySection.map(group => {
+            // Sort submissions by grade in descending order
+            const sortedSubmissions = group.submissions.sort((a, b) => b.grade - a.grade);
+
+            // Determine the winners
+            let winners = { first: [], second: [], third: [] };
+            let currentRank = 1;
+
+            sortedSubmissions.forEach((submission, index) => {
+                if (index === 0) {
+                    winners.first.push(submission);
+                } else {
+                    const previousSubmission = sortedSubmissions[index - 1];
+                    if (submission.grade === previousSubmission.grade) {
+                        if (currentRank === 1) {
+                            winners.first.push(submission);
+                        } else if (currentRank === 2) {
+                            winners.second.push(submission);
+                        } else {
+                            winners.third.push(submission);
+                        }
+                    } else {
+                        if (winners.second.length === 0) {
+                            currentRank = 2;
+                            winners.second.push(submission);
+                        } else if (winners.third.length === 0) {
+                            currentRank = 3;
+                            winners.third.push(submission);
+                        } else {
+                            return;
+                        }
+                    }
+                }
+            });
+
+            return {
+                section: group.section,
+                winners: winners
+            };
+        });
+
+        res.status(200).json(results);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+

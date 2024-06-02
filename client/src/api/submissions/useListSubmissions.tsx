@@ -1,17 +1,16 @@
-import React from 'react'
 import useAxios from '../../hooks/useAxios';
 import { useQuery } from 'react-query';
 
 const useListSubmissions = () => {
  const axios = useAxios();
 
- const LisrSubmissionRequest = () => {
+ const ListSubmissionRequest = () => {
    return axios({
      url: `api/submissions/`,
    });
  };
 
- const request = useQuery(['submissions'], LisrSubmissionRequest);
+ const request = useQuery(['submissions'], ListSubmissionRequest);
 
  return request;
 }

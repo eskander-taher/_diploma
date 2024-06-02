@@ -41,9 +41,13 @@ router.get("/submissions/author/:authorId", submissionController.getSubmissionsB
 //  Getting submissions by mod
 router.get("/submissions/mod/:modId", submissionController.getSubmissionsByMod);
 
-// Grade sumission
+//  Grade sumission
 router.put("/submissions/grade/:id", submissionController.gradeSubmissionById);
 
+// group submissions by section 
 router.get("/submissions/grouped/sections", submissionController.getAllSubmissionsGroupedBySection);
+
+// get winners of an event
+router.get("/submissions/results/:eventId", submissionController.getResultsByEvent);
 
 module.exports = router;

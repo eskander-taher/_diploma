@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import useLisrSections from '../../api/sections/useListSections';
 import useListSubmissions from '../../api/submissions/useListSubmissions';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
@@ -30,12 +29,16 @@ function SubmissionList() {
       setDownloadEnabled(true);
     }
   };
+  console.log(data)
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Submissions" />
       <table className="w-full table-auto">
         <thead>
           <tr className="bg-gray-2 text-left dark:bg-meta-4">
+            <th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+              Author name
+            </th>
             <th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
               Work name
             </th>
@@ -58,8 +61,13 @@ function SubmissionList() {
         </thead>
         <tbody>
           {isSuccess ? (
-            data.data.map((item: any) => (
+            data?.data?.map((item: any) => (
               <tr key={item.id}>
+                <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                  <h5 className="font-medium text-black dark:text-white">
+                    {item.author.firstName}
+                  </h5>
+                </td>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
                     {item.workName}

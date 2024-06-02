@@ -1,4 +1,3 @@
-import React from 'react';
 import useAxios from '../../hooks/useAxios';
 import { useMutation } from 'react-query';
 
@@ -6,10 +5,11 @@ const useGradeSubmissions = () => {
   const axios = useAxios();
 
   const gradeSubmissionRequest = (data: any) => {
+    console.log(data)
     return axios({
-      url: `api/submissions/${data.subId}/grade`,
-      method: 'POST',
-      data: data,
+      url: `api/submissions/grade/${data.subId}`,
+      data: data.payload,
+      method: 'PUT',
     });
   };
 

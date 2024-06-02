@@ -2,6 +2,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Link, useParams } from 'react-router-dom';
 import useGetEvent from '../../api/events/useGetEvent';
 import useAuth from '../../hooks/useAuth';
+import WinnersTable from './WinnersTable';
 
 const Event = () => {
   const { eventId } = useParams();
@@ -42,6 +43,7 @@ const Event = () => {
           </>
         )}
       </div>
+      {data?.data?.status === 'finished' && <WinnersTable eventId={eventId} />}
     </DefaultLayout>
   );
 };
