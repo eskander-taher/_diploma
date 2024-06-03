@@ -216,3 +216,7 @@ span.flatpickr-weekday,
 [x-cloak] {
   display: none !important;
 }
+
+.vignette {
+  background: radial-gradient(circle, transparent, black);
+}

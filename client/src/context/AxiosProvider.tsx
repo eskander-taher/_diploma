@@ -4,8 +4,8 @@ import useAuth from '../hooks/useAuth';
 
 export const axiosContext = createContext({});
 
-// export const baseURL = "http://localhost:80/";
-export const baseURL = "http://142.93.99.212:80/";
+export const baseURL = "http://localhost:80/";
+// export const baseURL = "http://142.93.99.212:80/";
 
 const AxiosProvider = ({ children }) => {
   const { authState } = useAuth();
