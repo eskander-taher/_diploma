@@ -26,4 +26,3 @@ const newsSchema = new Schema(
 const News = mongoose.model("News", newsSchema);
 
 module.exports = News;
- 
